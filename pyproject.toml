@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "Universal lightweight embedded Linux AI runtime for Raspberry Pi, Orange Pi, and ARM64 SoCs"
 readme = "README.md"
 authors = [{ name = "litrun Contributors", email = "dev@litrun.dev" }]
-license = { text = "MIT" }
+license = "MIT"
 requires-python = ">=3.9"
 keywords = [
     "edge-ai",
@@ -25,7 +25,6 @@ classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: POSIX :: Linux",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.9",

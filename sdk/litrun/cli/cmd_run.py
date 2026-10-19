@@ -131,48 +131,14 @@ def run_cmd(model_id: str, prompt_text: str, preferred_quant: str, thread_count:
     )
 
     # 6. Execution Loop
-    session = Session(max_context_tokens=entry.default_context)
-    if system_prompt:
-        session.system_prompt = system_prompt
+    try:
+        session = Session(max_context_tokens=entry.default_context)
+        if system_prompt:
+            session.system_prompt = system_prompt
 
-    if prompt_text:
-        console.print(f"\n[bold green]>[/bold green] {prompt_text}\n")
-        session.add_user_message(prompt_text)
-        formatted = session.format_prompt(family=entry.family)
-
-        console.print(f"[bold cyan]litrun:[/bold cyan] ", end="")
-        chunks = []
-        t0 = time.perf_counter()
-        token_count = 0
-
-        for chunk in backend.stream(formatted, threads=final_threads):
-            sys.stdout.write(chunk)
-            sys.stdout.flush()
-            chunks.append(chunk)
-            token_count += 1
-
-        t1 = time.perf_counter()
-        elapsed = t1 - t0
-        actual_tps = (token_count / elapsed) if elapsed > 0.05 else expected_speed
-
-        console.print(f"\n\n[dim]⚡ Telemetry: {token_count} tokens generated in {elapsed:.2f}s ({actual_tps:.1f} tok/s)[/dim]\n")
-        return
-
-    # Interactive REPL
-    console.print("[dim]Type your prompt below. Enter 'exit' to quit, 'clear' to reset context.[/dim]\n")
-    while True:
-        try:
-            user_msg = console.input("[bold green]>[/bold green] ").strip()
-            if not user_msg:
-                continue
-            if user_msg.lower() in ["exit", "quit"]:
-                break
-            if user_msg.lower() == "clear":
-                session.clear()
-                console.print("[dim]Context memory cleared.[/dim]\n")
-                continue
-
-            session.add_user_message(user_msg)
+        if prompt_text:
+            console.print(f"\n[bold green]>[/bold green] {prompt_text}\n")
+            session.add_user_message(prompt_text)
             formatted = session.format_prompt(family=entry.family)
 
             console.print(f"[bold cyan]litrun:[/bold cyan] ", end="")
@@ -190,8 +156,45 @@ def run_cmd(model_id: str, prompt_text: str, preferred_quant: str, thread_count:
             elapsed = t1 - t0
             actual_tps = (token_count / elapsed) if elapsed > 0.05 else expected_speed
 
-            session.add_assistant_message("".join(chunks))
-            console.print(f"\n[dim]({actual_tps:.1f} tok/s)[/dim]\n")
-        except (KeyboardInterrupt, EOFError):
-            console.print("\n[dim]Session terminated.[/dim]")
-            break
+            console.print(f"\n\n[dim]⚡ Telemetry: {token_count} tokens generated in {elapsed:.2f}s ({actual_tps:.1f} tok/s)[/dim]\n")
+            return
+
+        # Interactive REPL
+        console.print("[dim]Type your prompt below. Enter 'exit' to quit, 'clear' to reset context.[/dim]\n")
+        while True:
+            try:
+                user_msg = console.input("[bold green]>[/bold green] ").strip()
+                if not user_msg:
+                    continue
+                if user_msg.lower() in ["exit", "quit"]:
+                    break
+                if user_msg.lower() == "clear":
+                    session.clear()
+                    console.print("[dim]Context memory cleared.[/dim]\n")
+                    continue
+
+                session.add_user_message(user_msg)
+                formatted = session.format_prompt(family=entry.family)
+
+                console.print(f"[bold cyan]litrun:[/bold cyan] ", end="")
+                chunks = []
+                t0 = time.perf_counter()
+                token_count = 0
+
+                for chunk in backend.stream(formatted, threads=final_threads):
+                    sys.stdout.write(chunk)
+                    sys.stdout.flush()
+                    chunks.append(chunk)
+                    token_count += 1
+
+                t1 = time.perf_counter()
+                elapsed = t1 - t0
+                actual_tps = (token_count / elapsed) if elapsed > 0.05 else expected_speed
+
+                session.add_assistant_message("".join(chunks))
+                console.print(f"\n[dim]({actual_tps:.1f} tok/s)[/dim]\n")
+            except (KeyboardInterrupt, EOFError):
+                console.print("\n[dim]Session terminated.[/dim]")
+                break
+    finally:
+        backend.close()

@@ -21,6 +21,7 @@ def get_cache_root() -> str:
     root = os.environ.get("LITRUN_CACHE_DIR", os.path.expanduser("~/.cache/litrun"))
     os.makedirs(os.path.join(root, "models"), exist_ok=True)
     os.makedirs(os.path.join(root, "bin"), exist_ok=True)
+    os.makedirs(os.path.join(root, "lib"), exist_ok=True)
     return root
 
 
@@ -30,6 +31,10 @@ def get_models_cache_dir() -> str:
 
 def get_bin_cache_dir() -> str:
     return os.path.join(get_cache_root(), "bin")
+
+
+def get_lib_cache_dir() -> str:
+    return os.path.join(get_cache_root(), "lib")
 
 
 def get_model_cache_path(model_id: str, quant: str) -> str:

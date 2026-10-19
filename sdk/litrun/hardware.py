@@ -69,19 +69,24 @@ class HardwareProfile:
         return asdict(self)
 
 
-def _find_core_library() -> Optional[str]:
-    """Search candidate paths for liblitrun_core.so"""
+def _get_core_library_candidates() -> list[str]:
     pkg_dir = os.path.dirname(os.path.abspath(__file__))
     candidates = [
+        os.environ.get("LITRUN_CORE_LIB", ""),
+        os.path.expanduser("~/.cache/litrun/lib/liblitrun_core.so"),
         os.path.join(pkg_dir, "lib", "liblitrun_core.so"),
-        # Repo root relative
         os.path.abspath(os.path.join(pkg_dir, "..", "..", "core", "lib", "liblitrun_core.so")),
-        # System install paths
         "/usr/local/lib/litrun/liblitrun_core.so",
+        "/usr/local/lib/liblitrun_core.so",
         "/usr/lib/liblitrun_core.so",
         "liblitrun_core.so",
     ]
-    for path in candidates:
+    return [p for p in candidates if p and (os.path.isfile(p) or p == "liblitrun_core.so")]
+
+
+def _find_core_library() -> Optional[str]:
+    """Search candidate paths for liblitrun_core.so"""
+    for path in _get_core_library_candidates():
         if os.path.isfile(path):
             return path
     return None
@@ -95,8 +100,7 @@ def _get_c_library():
     if _LIB_HANDLE is not None:
         return _LIB_HANDLE
 
-    lib_path = _find_core_library()
-    if lib_path:
+    for lib_path in _get_core_library_candidates():
         try:
             lib = ctypes.CDLL(lib_path)
             lib.litrun_probe_hardware.argtypes = [ctypes.POINTER(LitrunHwProfileC)]
@@ -109,8 +113,9 @@ def _get_c_library():
             ]
             _LIB_HANDLE = lib
             return _LIB_HANDLE
-        except Exception:
-            pass
+        except (OSError, AttributeError):
+            continue
+
     return None
 
 

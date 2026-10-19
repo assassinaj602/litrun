@@ -8,12 +8,50 @@ import abc
 import atexit
 import json
 import os
+import signal
 import socket
 import subprocess
+import sys
 import time
 import urllib.request
 import urllib.error
 from typing import Generator, Optional
+
+
+def _build_execution_env(binary_path: str) -> dict:
+    """Prepend binary's parent directory to LD_LIBRARY_PATH so bundled libllama.so / libggml.so resolve."""
+    env = os.environ.copy()
+    bin_dir = os.path.dirname(os.path.abspath(binary_path))
+    existing_ld = env.get("LD_LIBRARY_PATH", "")
+    env["LD_LIBRARY_PATH"] = f"{bin_dir}:{existing_ld}" if existing_ld else bin_dir
+    return env
+
+
+_ACTIVE_ENGINES: set["PersistentLlamaServerEngine"] = set()
+
+
+def _cleanup_all_active_engines():
+    for engine in list(_ACTIVE_ENGINES):
+        try:
+            engine.close()
+        except Exception:
+            pass
+    _ACTIVE_ENGINES.clear()
+
+
+atexit.register(_cleanup_all_active_engines)
+
+
+def _handle_exit_signal(signum, frame):
+    _cleanup_all_active_engines()
+    sys.exit(128 + signum)
+
+
+try:
+    signal.signal(signal.SIGTERM, _handle_exit_signal)
+    signal.signal(signal.SIGINT, _handle_exit_signal)
+except (ValueError, AttributeError):
+    pass
 
 
 class InferenceBackend(abc.ABC):
@@ -66,7 +104,7 @@ class PersistentLlamaServerEngine(InferenceBackend):
         self.base_url = f"http://{self.host}:{self.port}"
         self.proc: Optional[subprocess.Popen] = None
         self._start_server(timeout_seconds)
-        atexit.register(self.close)
+        _ACTIVE_ENGINES.add(self)
 
     def _start_server(self, timeout_seconds: float) -> None:
         cmd = [
@@ -80,10 +118,12 @@ class PersistentLlamaServerEngine(InferenceBackend):
             "--log-disable",
         ]
 
+        env = _build_execution_env(self.binary_path)
         self.proc = subprocess.Popen(
             cmd,
             stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
+            stderr=subprocess.PIPE,
+            env=env,
         )
 
         # Poll /health until server is ready
@@ -101,9 +141,16 @@ class PersistentLlamaServerEngine(InferenceBackend):
                     break
 
         if not ready:
+            err_msg = ""
+            if self.proc and self.proc.poll() is not None:
+                try:
+                    err_msg = self.proc.stderr.read().decode("utf-8", "ignore").strip()
+                except Exception:
+                    pass
             self.close()
+            reason = f": {err_msg}" if err_msg else ""
             raise RuntimeError(
-                f"Failed to start persistent llama-server on {self.base_url} within {timeout_seconds}s"
+                f"Failed to start persistent llama-server on {self.base_url} within {timeout_seconds}s{reason}"
             )
 
     def stream(self, prompt: str, **kwargs) -> Generator[str, None, None]:
@@ -159,13 +206,24 @@ class PersistentLlamaServerEngine(InferenceBackend):
             yield f"[Inference Error: {str(e)}]"
 
     def close(self) -> None:
+        _ACTIVE_ENGINES.discard(self)
         if self.proc and self.proc.poll() is None:
-            self.proc.terminate()
             try:
+                self.proc.terminate()
                 self.proc.wait(timeout=2.0)
-            except subprocess.TimeoutExpired:
-                self.proc.kill()
+            except (subprocess.TimeoutExpired, Exception):
+                try:
+                    self.proc.kill()
+                    self.proc.wait(timeout=1.0)
+                except Exception:
+                    pass
         self.proc = None
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
 
     def __del__(self):
         self.close()
@@ -204,6 +262,7 @@ class LlamaCppEngine(InferenceBackend):
             "--no-display-prompt",
         ]
 
+        env = _build_execution_env(self.binary_path)
         t_start = time.perf_counter()
         t_first = None
         token_count = 0
@@ -215,6 +274,7 @@ class LlamaCppEngine(InferenceBackend):
                 stderr=subprocess.PIPE,
                 text=True,
                 bufsize=1,
+                env=env,
             )
 
             for line in iter(proc.stdout.readline, ""):

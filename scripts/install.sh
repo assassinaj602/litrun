@@ -99,6 +99,7 @@ python3 -m pip install --upgrade --user litrun 2>/dev/null || {
 CACHE_DIR="$HOME/.cache/litrun"
 mkdir -p "$CACHE_DIR/bin"
 mkdir -p "$CACHE_DIR/models"
+mkdir -p "$CACHE_DIR/lib"
 
 success "Created cache directory at $CACHE_DIR"
 success "litrun installed successfully!"

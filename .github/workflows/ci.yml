@@ -56,3 +56,4 @@ jobs:
           litrun --help
           litrun inspect
           litrun list
+

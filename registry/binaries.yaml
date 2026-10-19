@@ -3,7 +3,7 @@
 
 version: "1.0"
 engine_type: "llama.cpp"
-release_version: "b3920"
+release_version: "b11741"
 
 targets:
   arm64-a76-dotprod:
@@ -13,7 +13,8 @@ targets:
     cflags: "-march=armv8.2-a+fp16+dotprod -O3"
     url: "https://github.com/litrun/litrun/releases/download/v0.1.0/litrun-engine-arm64-a76-v0.1.0.tar.gz"
     sha256: "b6f57134379e43b17937b2ec9c6ae406f8c7b8e19c0b1e16f3d8a43627402681"
-    binary_name: "llama-cli"
+    binary_name: "llama-server"
+    cli_name: "llama-cli"
 
   arm64-a72-neon:
     name: "ARM64 Cortex-A72 (NEON)"
@@ -22,31 +23,37 @@ targets:
     cflags: "-march=armv8-a+simd -O3"
     url: "https://github.com/litrun/litrun/releases/download/v0.1.0/litrun-engine-arm64-a72-v0.1.0.tar.gz"
     sha256: "77a83d7830cb85bbf1277a16f2c2fe45c924bc98864d46ad5021a8d438062a42"
-    binary_name: "llama-cli"
+    binary_name: "llama-server"
+    cli_name: "llama-cli"
 
   arm64-generic:
     name: "ARM64 Generic (NEON Baseline)"
-    description: "Portable baseline for Raspberry Pi 3, Pi Zero 2 W, and generic aarch64"
+    description: "Portable baseline for Raspberry Pi 3, Pi 4, Pi 5, and generic aarch64"
     arch: "aarch64"
     cflags: "-march=armv8-a -O3"
-    url: "https://github.com/litrun/litrun/releases/download/v0.1.0/litrun-engine-arm64-generic-v0.1.0.tar.gz"
-    sha256: "9cf451a43a059d332617f654b419846059d339f4088001648a7395055b8ef6c9"
-    binary_name: "llama-cli"
+    url: "https://github.com/ggml-org/llama.cpp/releases/download/b11741/llama-b11741-bin-ubuntu-arm64.tar.gz"
+    sha256: "590d34ed66675383447868dfc7f35aabbc6a02dd705c1be27c5c0648fbeef607"
+    binary_name: "llama-server"
+    cli_name: "llama-cli"
 
   x86_64-avx2:
     name: "x86_64 (AVX2 + FMA)"
     description: "Tuned for modern x86_64 edge workstations and dev laptops"
     arch: "x86_64"
     cflags: "-mavx2 -mfma -O3"
-    url: "https://github.com/litrun/litrun/releases/download/v0.1.0/litrun-engine-x86_64-avx2-v0.1.0.tar.gz"
-    sha256: "2d7b420042456459345ee31338a9da9d682490b4ad6244df0e10b2df7ea5e003"
-    binary_name: "llama-cli"
+    url: "https://github.com/ggml-org/llama.cpp/releases/download/b11741/llama-b11741-bin-ubuntu-x64.tar.gz"
+    sha256: "a71959bd7e422cc8deb0727f2eb851749d0eb86ba76ad4c7bd4cb95e47083a78"
+    binary_name: "llama-server"
+    cli_name: "llama-cli"
+    strip_components: 1
 
   x86_64-generic:
     name: "x86_64 Generic"
     description: "Standard portable x86_64 baseline"
     arch: "x86_64"
     cflags: "-O3"
-    url: "https://github.com/litrun/litrun/releases/download/v0.1.0/litrun-engine-x86_64-generic-v0.1.0.tar.gz"
-    sha256: "45f9c49d21df75d1f87aa9d12349887754320293774659b8374a2b9d62888147"
-    binary_name: "llama-cli"
+    url: "https://github.com/ggml-org/llama.cpp/releases/download/b11741/llama-b11741-bin-ubuntu-x64.tar.gz"
+    sha256: "a71959bd7e422cc8deb0727f2eb851749d0eb86ba76ad4c7bd4cb95e47083a78"
+    binary_name: "llama-server"
+    cli_name: "llama-cli"
+    strip_components: 1

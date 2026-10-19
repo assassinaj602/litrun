@@ -22,3 +22,4 @@ Briefly explain the intent, implementation, and impact of these changes.
 - [ ] Python tests pass (`pytest`)
 - [ ] Output of `litrun inspect` verified
 - [ ] Documentation updated if relevant
+

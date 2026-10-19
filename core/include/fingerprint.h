@@ -64,3 +64,4 @@ void litrun_derive_profile_id(const litrun_hw_profile_t *p, char *out_id, size_t
 #endif
 
 #endif /* LITRUN_FINGERPRINT_H */
+

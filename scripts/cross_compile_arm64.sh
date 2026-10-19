@@ -24,7 +24,9 @@ compile_a76_pi5() {
         CC="aarch64-linux-gnu-gcc"
         CFLAGS="-march=armv8.2-a+fp16+dotprod -O3 -fPIC -Wall -Wextra"
         $CC $CFLAGS -Icore/include core/tools/probe_main.c core/fingerprint/fingerprint.c core/governor/governor.c -o "$TARGET_DIR/litrun-probe"
-        echo "✓ Built litrun-probe for ARM64 Cortex-A76"
+        $CC $CFLAGS -shared -Icore/include core/fingerprint/fingerprint.c core/governor/governor.c -o "$TARGET_DIR/liblitrun_core.so"
+        tar -czf "$OUTPUT_DIR/litrun-core-arm64-a76.tar.gz" -C "$TARGET_DIR" litrun-probe liblitrun_core.so
+        echo "✓ Built litrun-probe and liblitrun_core.so for ARM64 Cortex-A76"
     else
         echo "! aarch64-linux-gnu-gcc not found on host. Use Docker or zig cc for cross-compilation."
     fi
@@ -39,7 +41,9 @@ compile_a72_pi4() {
         CC="aarch64-linux-gnu-gcc"
         CFLAGS="-march=armv8-a+simd -O3 -fPIC -Wall -Wextra"
         $CC $CFLAGS -Icore/include core/tools/probe_main.c core/fingerprint/fingerprint.c core/governor/governor.c -o "$TARGET_DIR/litrun-probe"
-        echo "✓ Built litrun-probe for ARM64 Cortex-A72"
+        $CC $CFLAGS -shared -Icore/include core/fingerprint/fingerprint.c core/governor/governor.c -o "$TARGET_DIR/liblitrun_core.so"
+        tar -czf "$OUTPUT_DIR/litrun-core-arm64-a72.tar.gz" -C "$TARGET_DIR" litrun-probe liblitrun_core.so
+        echo "✓ Built litrun-probe and liblitrun_core.so for ARM64 Cortex-A72"
     else
         echo "! aarch64-linux-gnu-gcc not found on host. Use Docker or zig cc for cross-compilation."
     fi
@@ -63,3 +67,4 @@ case "$TARGET_ARCH" in
 esac
 
 echo "Cross-compilation script completed."
+

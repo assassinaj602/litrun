@@ -74,3 +74,4 @@ def bench_cmd(model_id: str, tokens: int):
     table.add_row("Memory Consumption", f"{variant.size_mb + 250} MB", f"Envelope: {hw.ram_avail_mb}MB free")
 
     console.print(table)
+

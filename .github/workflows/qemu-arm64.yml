@@ -26,3 +26,4 @@ jobs:
              make -C core clean all && \
              make -C core test && \
              ./core/bin/litrun-probe"
+

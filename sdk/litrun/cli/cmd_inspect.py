@@ -110,3 +110,4 @@ def inspect_cmd(json_output: bool):
         vec_table.add_row("NVIDIA NVDLA", "[bold green]DETECTED[/bold green]", "Jetson deep learning accelerator accessible")
 
     console.print(vec_table)
+

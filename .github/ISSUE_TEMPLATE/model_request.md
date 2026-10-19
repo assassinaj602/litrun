@@ -23,3 +23,4 @@ assignees: ""
 - [ ] Verified SHA-256 checksum matches HuggingFace source
 - [ ] Successfully run inference with `litrun run <model>`
 - [ ] Tested on physical board or QEMU
+

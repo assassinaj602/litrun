@@ -107,3 +107,4 @@ printf "\n${GREEN}${BOLD}Next steps:${RESET}\n"
 printf "  1. Run hardware inspection:     ${BOLD}litrun inspect${RESET}\n"
 printf "  2. Run your first model:        ${BOLD}litrun run qwen2.5-0.5b${RESET}\n"
 printf "  3. Start OpenAI REST server:    ${BOLD}litrun serve --port 8080${RESET}\n\n"
+

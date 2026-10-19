@@ -22,3 +22,4 @@ Sleep 3s
 Type "litrun run qwen2.5-0.5b --prompt 'Explain how litrun avoids kernel OOM crashes on Raspberry Pi.'"
 Enter
 Sleep 5s
+

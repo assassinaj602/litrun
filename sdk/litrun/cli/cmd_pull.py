@@ -60,3 +60,4 @@ def pull_cmd(model_id: str, quant_name: str, force: bool):
         except Exception as e:
             console.print(f"[bold red]✗ Download failed:[/bold red] {str(e)}")
             sys.exit(1)
+

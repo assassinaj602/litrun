@@ -32,3 +32,4 @@ add_test(NAME test_fingerprint COMMAND test_fingerprint)
 add_executable(test_governor ../tests/core/test_governor.c)
 target_link_libraries(test_governor PRIVATE litrun_core)
 add_test(NAME test_governor COMMAND test_governor)
+

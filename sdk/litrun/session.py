@@ -73,3 +73,4 @@ class Session:
                 lines.append(f"<|im_start|>{msg.role}\n{msg.content}<|im_end|>\n")
             lines.append("<|im_start|>assistant\n")
             return "".join(lines)
+

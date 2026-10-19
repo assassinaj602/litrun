@@ -16,3 +16,4 @@ console = Console()
 def serve_cmd(model_id: str, host: str, port: int):
     """Starts an OpenAI-compatible REST server (POST /v1/chat/completions)."""
     start_server(host=host, port=port, model_id=model_id)
+

@@ -91,6 +91,11 @@ class Model:
         binary_path = None
         weights_path = None
 
+        try:
+            binary_path = resolve_engine_binary(hw)
+        except Exception:
+            binary_path = None
+
         cached_weights = get_model_cache_path(entry.id, variant.quant)
         import os
         if os.path.isfile(cached_weights):
@@ -137,6 +142,17 @@ class Model:
     def generate(self, prompt: str, **kwargs) -> str:
         """Returns the complete generated string response."""
         return "".join(list(self.stream(prompt, **kwargs)))
+
+    def close(self) -> None:
+        """Shuts down any persistent backend processes."""
+        if hasattr(self, "backend") and self.backend:
+            self.backend.close()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
 
     def chat(self) -> None:
         """Starts an interactive multi-turn terminal conversation."""

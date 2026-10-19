@@ -52,8 +52,15 @@ static void safe_copy(char *dst, const char *src, size_t dst_size) {
     dst[dst_size - 1] = '\0';
 }
 
+static const char* get_sys_root(void) {
+    const char *env = getenv("LITRUN_SYSROOT");
+    return (env && env[0] != '\0') ? env : "";
+}
+
 static int read_sysfs_string(const char *path, char *buf, size_t max_len) {
-    FILE *f = fopen(path, "r");
+    char full_path[512];
+    snprintf(full_path, sizeof(full_path), "%s%s", get_sys_root(), path);
+    FILE *f = fopen(full_path, "r");
     if (!f) return -1;
     if (!fgets(buf, (int)max_len, f)) {
         fclose(f);
@@ -86,7 +93,9 @@ static int read_thermal_temp(float *out_temp) {
 }
 
 static void read_accurate_meminfo(long *total_mb, long *avail_mb, long *swap_tot_mb, long *swap_free_mb) {
-    FILE *f = fopen("/proc/meminfo", "r");
+    char mem_path[512];
+    snprintf(mem_path, sizeof(mem_path), "%s/proc/meminfo", get_sys_root());
+    FILE *f = fopen(mem_path, "r");
     if (!f) return;
 
     char line[256];
@@ -181,7 +190,9 @@ int litrun_probe_hardware(litrun_hw_profile_t *p) {
     }
 
     /* 3. Parse /proc/cpuinfo for SoC, Part Number, and Cores */
-    FILE *f_cpu = fopen("/proc/cpuinfo", "r");
+    char cpu_path[512];
+    snprintf(cpu_path, sizeof(cpu_path), "%s/proc/cpuinfo", get_sys_root());
+    FILE *f_cpu = fopen(cpu_path, "r");
     int core_count = 0;
     int max_arm_part = 0;
     char cpu_hardware[64] = {0};
@@ -266,23 +277,34 @@ int litrun_probe_hardware(litrun_hw_profile_t *p) {
     }
 
     /* 4. Runtime ISA Vector Probing via getauxval or builtin */
+    if (get_sys_root()[0] != '\0') {
+        if (max_arm_part > 0 || strstr(p->soc, "BCM") != NULL || strstr(p->soc, "RK") != NULL) {
+            safe_copy(p->arch, "aarch64", sizeof(p->arch));
+            p->has_neon = 1;
+            if (max_arm_part == 0xd0b || strstr(p->soc, "BCM2712") || strstr(p->soc, "RK3588")) {
+                p->has_dotprod = 1;
+                p->has_fp16 = 1;
+            }
+        }
+    } else {
 #if defined(__aarch64__) && defined(__linux__)
-    unsigned long hwcap = getauxval(AT_HWCAP);
-    unsigned long hwcap2 = getauxval(AT_HWCAP2);
+        unsigned long hwcap = getauxval(AT_HWCAP);
+        unsigned long hwcap2 = getauxval(AT_HWCAP2);
 
-    p->has_neon    = (hwcap  & HWCAP_ASIMD)   ? 1 : 0;
-    p->has_dotprod = (hwcap  & HWCAP_ASIMDDP) ? 1 : 0;
-    p->has_fp16    = (hwcap  & HWCAP_FPHP)    ? 1 : 0;
-    p->has_sve     = (hwcap  & HWCAP_SVE)     ? 1 : 0;
-    p->has_i8mm    = (hwcap2 & HWCAP2_I8MM)   ? 1 : 0;
+        p->has_neon    = (hwcap  & HWCAP_ASIMD)   ? 1 : 0;
+        p->has_dotprod = (hwcap  & HWCAP_ASIMDDP) ? 1 : 0;
+        p->has_fp16    = (hwcap  & HWCAP_FPHP)    ? 1 : 0;
+        p->has_sve     = (hwcap  & HWCAP_SVE)     ? 1 : 0;
+        p->has_i8mm    = (hwcap2 & HWCAP2_I8MM)   ? 1 : 0;
 #elif defined(__x86_64__)
-    #if defined(__GNUC__) || defined(__clang__)
-    p->has_avx    = __builtin_cpu_supports("avx") ? 1 : 0;
-    p->has_avx2   = __builtin_cpu_supports("avx2") ? 1 : 0;
-    p->has_avx512 = __builtin_cpu_supports("avx512f") ? 1 : 0;
-    p->has_fma    = __builtin_cpu_supports("fma") ? 1 : 0;
-    #endif
+        #if defined(__GNUC__) || defined(__clang__)
+        p->has_avx    = __builtin_cpu_supports("avx") ? 1 : 0;
+        p->has_avx2   = __builtin_cpu_supports("avx2") ? 1 : 0;
+        p->has_avx512 = __builtin_cpu_supports("avx512f") ? 1 : 0;
+        p->has_fma    = __builtin_cpu_supports("fma") ? 1 : 0;
+        #endif
 #endif
+    }
 
     /* 5. Memory Query */
     struct sysinfo si;

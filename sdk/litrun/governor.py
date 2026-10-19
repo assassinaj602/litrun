@@ -186,3 +186,4 @@ def check_ram_envelope(
     pct = int((ram_needed / effective_avail) * 100) if effective_avail > 0 else 0
     reason = f"PASS: {ram_needed}MB required out of {effective_avail}MB available ({pct}% envelope)."
     return (True, ram_needed, reason, False)
+

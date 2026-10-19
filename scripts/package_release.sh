@@ -20,3 +20,4 @@ cd - >/dev/null
 
 echo "✓ Release assets generated in $DIST_DIR:"
 ls -lh "$DIST_DIR"
+

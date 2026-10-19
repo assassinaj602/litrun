@@ -201,3 +201,4 @@ def select_optimal_variant(
         msg = f"Memory Constrained: Automatically downgraded to {smallest_var.quant} ({smallest_var.size_mb}MB) to fit into {hw.ram_avail_mb}MB free RAM."
 
     return smallest_var, msg
+

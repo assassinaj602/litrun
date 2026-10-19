@@ -291,3 +291,4 @@ def probe_hardware() -> HardwareProfile:
             )
 
     return _pure_python_probe()
+

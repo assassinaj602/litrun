@@ -128,52 +128,88 @@ def select_binary_target(hw: HardwareProfile) -> str:
 
 def resolve_engine_binary(
     hw: HardwareProfile,
+    prefer_server: bool = True,
     force_download: bool = False,
     progress_callback: Optional[Callable[[int, int], None]] = None,
 ) -> str:
     """
-    Resolves or downloads the microarchitecture-tuned llama-cli inference binary.
-    Falls back gracefully to system `llama-cli` or bundled runner.
+    Resolves or downloads the microarchitecture-tuned llama.cpp binary.
+    Prioritizes persistent `llama-server` for sub-100ms TTFT, with fallback to `llama-cli`.
     """
     bin_dir = get_bin_cache_dir()
     target_key = select_binary_target(hw)
-    target_binary_path = os.path.join(bin_dir, f"llama-cli-{target_key}")
 
-    # 1. Check local cache
-    if os.path.isfile(target_binary_path) and os.access(target_binary_path, os.X_OK) and not force_download:
-        return target_binary_path
+    server_candidates = [
+        os.path.join(bin_dir, "llama-server"),
+        os.path.join(bin_dir, f"llama-server-{target_key}"),
+        shutil.which("llama-server"),
+    ]
+    cli_candidates = [
+        os.path.join(bin_dir, "llama-cli"),
+        os.path.join(bin_dir, f"llama-cli-{target_key}"),
+        shutil.which("llama-cli"),
+        shutil.which("llama.cpp"),
+        shutil.which("main"),
+    ]
 
-    # 2. Check if generic llama-cli is in system PATH
-    sys_llama = shutil.which("llama-cli") or shutil.which("llama.cpp") or shutil.which("main")
-    if sys_llama and not force_download:
-        return sys_llama
+    # 1. Check existing binaries if not force_download
+    if not force_download:
+        if prefer_server:
+            for cand in server_candidates:
+                if cand and os.path.isfile(cand) and os.access(cand, os.X_OK):
+                    return cand
+        for cand in cli_candidates:
+            if cand and os.path.isfile(cand) and os.access(cand, os.X_OK):
+                return cand
 
-    # 3. Pull from binaries registry
+    # 2. Pull from binaries registry if missing
     binaries_manifest = load_binaries_registry()
     targets = binaries_manifest.get("targets", {})
-    entry = targets.get(target_key)
 
-    if entry and entry.get("url"):
-        try:
-            archive_path = os.path.join(bin_dir, f"engine-{target_key}.tar.gz")
-            download_file_streaming(
-                url=entry["url"],
-                destination=archive_path,
-                expected_sha256=entry.get("sha256"),
-                progress_callback=progress_callback,
-            )
-            # Extract
-            with tarfile.open(archive_path, "r:*") as tar:
-                tar.extractall(path=bin_dir)
-            os.remove(archive_path)
+    candidate_keys = [target_key]
+    if hw.arch in ["aarch64", "arm64"] and target_key != "arm64-generic":
+        candidate_keys.append("arm64-generic")
+    elif hw.arch == "x86_64" and target_key != "x86_64-generic":
+        candidate_keys.append("x86_64-generic")
 
-            extracted_binary = os.path.join(bin_dir, entry.get("binary_name", "llama-cli"))
-            if os.path.isfile(extracted_binary):
-                shutil.move(extracted_binary, target_binary_path)
-                os.chmod(target_binary_path, stat.S_IRWXU | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH)
-                return target_binary_path
-        except Exception:
-            pass
+    for key in candidate_keys:
+        entry = targets.get(key)
+        if entry and entry.get("url"):
+            try:
+                archive_path = os.path.join(bin_dir, f"engine-{key}.tar.gz")
+                download_file_streaming(
+                    url=entry["url"],
+                    destination=archive_path,
+                    expected_sha256=entry.get("sha256"),
+                    progress_callback=progress_callback,
+                )
+                # Extract tarball
+                with tarfile.open(archive_path, "r:*") as tar:
+                    tar.extractall(path=bin_dir)
+                os.remove(archive_path)
 
-    # 4. If all else fails, create or return a fallback runner
-    return target_binary_path
+                # Discover and chmod binaries across top-level or subdirectories
+                for root, _, files in os.walk(bin_dir):
+                    for f in files:
+                        if f in ["llama-server", "llama-cli"]:
+                            full_f = os.path.join(root, f)
+                            target_dst = os.path.join(bin_dir, f)
+                            if full_f != target_dst:
+                                shutil.copy2(full_f, target_dst)
+                            os.chmod(target_dst, stat.S_IRWXU | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH)
+
+                if prefer_server and os.path.isfile(os.path.join(bin_dir, "llama-server")):
+                    return os.path.join(bin_dir, "llama-server")
+                if os.path.isfile(os.path.join(bin_dir, "llama-cli")):
+                    return os.path.join(bin_dir, "llama-cli")
+            except Exception:
+                continue
+
+    # 3. Fallback candidates check
+    for cand in (server_candidates if prefer_server else cli_candidates) + cli_candidates:
+        if cand and os.path.isfile(cand) and os.access(cand, os.X_OK):
+            return cand
+
+    return os.path.join(bin_dir, "llama-server" if prefer_server else "llama-cli")
+
+

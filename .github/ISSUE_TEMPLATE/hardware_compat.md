@@ -28,3 +28,4 @@ Max Temperature (°C):
 ### Working / Non-Working Observations
 - Any kernel warnings or dmesg logs?
 - Did thermal throttling engage during generation?
+

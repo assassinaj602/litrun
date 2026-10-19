@@ -67,3 +67,4 @@ targets:
     default_threads: 4
     thermal_trip_c: 85.0
     binary_target: "x86_64-avx2"
+

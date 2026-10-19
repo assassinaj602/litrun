@@ -26,17 +26,32 @@ jobs:
         run: |
           make -C core all
 
+      - name: Cross-compile ARM64 Core
+        run: |
+          chmod +x scripts/cross_compile_arm64.sh
+          ./scripts/cross_compile_arm64.sh all
+
       - name: Build Python Wheel and sdist
         run: |
           python -m build
+
+      - name: Create Checksums
+        run: |
+          cd dist
+          sha256sum *.whl *.tar.gz binaries/*.tar.gz > SHA256SUMS.txt || true
+          cd ..
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
-            dist/*
+            dist/*.whl
+            dist/*.tar.gz
+            dist/binaries/*.tar.gz
+            dist/SHA256SUMS.txt
             core/bin/litrun-probe
             core/lib/liblitrun_core.so
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+

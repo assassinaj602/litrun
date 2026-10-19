@@ -31,3 +31,4 @@ cli.add_command(bench_cmd, name="benchmark")
 
 if __name__ == "__main__":
     cli()
+

@@ -1,0 +1,1448 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>litrun — Complete Build Roadmap & Technical Specification</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['Fira Code', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              400: '#34d399',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+            },
+            accent: {
+              400: '#38bdf8',
+              500: '#0ea5e9',
+              600: '#0284c7',
+            },
+            dark: {
+              850: '#121824',
+              900: '#0b0f17',
+              950: '#06090e',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #0b0f17; }
+    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #334155; }
+    .glass-panel {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .code-scroll {
+      scrollbar-width: thin;
+      scrollbar-color: #334155 #0b0f17;
+    }
+  </style>
+</head>
+<body class="bg-dark-900 text-slate-100 font-sans antialiased selection:bg-brand-500/30 selection:text-brand-400 min-h-screen">
+
+  <!-- Header / Navigation -->
+  <header class="sticky top-0 z-50 glass-panel border-b border-slate-800/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <a href="#overview" class="flex items-center space-x-2.5 group">
+          <div class="w-9 h-9 rounded-lg bg-gradient-to-tr from-brand-600 to-accent-500 flex items-center justify-center font-mono font-bold text-slate-950 text-lg shadow-lg shadow-brand-500/20 group-hover:scale-105 transition-transform">
+            ⚡
+          </div>
+          <div>
+            <div class="flex items-center space-x-2">
+              <span class="font-bold text-xl tracking-tight text-white font-mono">litrun</span>
+              <span class="px-2 py-0.5 text-xs font-semibold uppercase tracking-wider rounded-full bg-brand-500/10 text-brand-400 border border-brand-500/20">v0.1 Spec</span>
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <!-- Desktop Nav -->
+      <nav class="hidden md:flex items-center space-x-1 lg:space-x-2 text-sm font-medium text-slate-300">
+        <a href="#overview" class="px-3 py-1.5 rounded-md hover:text-white hover:bg-slate-800/60 transition-colors">Overview</a>
+        <a href="#problem" class="px-3 py-1.5 rounded-md hover:text-white hover:bg-slate-800/60 transition-colors">Problem</a>
+        <a href="#architecture" class="px-3 py-1.5 rounded-md hover:text-white hover:bg-slate-800/60 transition-colors">Architecture</a>
+        <a href="#simulator" class="px-3 py-1.5 rounded-md text-brand-400 hover:text-brand-300 hover:bg-brand-500/10 transition-colors">Hardware Simulator</a>
+        <a href="#phases" class="px-3 py-1.5 rounded-md hover:text-white hover:bg-slate-800/60 transition-colors">12-Mo Plan</a>
+        <a href="#structure" class="px-3 py-1.5 rounded-md hover:text-white hover:bg-slate-800/60 transition-colors">Repo & Code</a>
+        <a href="#hardware-matrix" class="px-3 py-1.5 rounded-md hover:text-white hover:bg-slate-800/60 transition-colors">Targets</a>
+        <a href="#day-one" class="px-3 py-1.5 rounded-md text-accent-400 hover:text-accent-300 hover:bg-accent-500/10 transition-colors">Day 1 Blueprint</a>
+      </nav>
+
+      <!-- Quick Action CTA -->
+      <div class="flex items-center space-x-3">
+        <button id="quickCopyInstallBtn" class="hidden sm:inline-flex items-center space-x-2 px-3 py-1.5 rounded-lg text-xs font-mono bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors" title="Click to copy install command">
+          <span class="text-brand-400">$</span>
+          <span>curl -sSL litrun.dev | sh</span>
+          <svg class="w-3.5 h-3.5 text-slate-400 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+        </button>
+        <a href="#phases" class="inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-brand-500 hover:bg-brand-600 text-slate-950 font-sans shadow-md shadow-brand-500/20 transition-all">
+          <span>Explore Plan</span>
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section id="overview" class="relative pt-12 pb-16 overflow-hidden border-b border-slate-800">
+    <!-- Subtle Background Glow -->
+    <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-brand-500/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute top-1/3 left-1/3 w-80 h-80 bg-accent-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div class="text-center max-w-3xl mx-auto">
+        <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-slate-800/80 border border-slate-700/80 text-xs font-mono text-slate-300 mb-6">
+          <span class="w-2 h-2 rounded-full bg-brand-400 animate-pulse"></span>
+          <span>COMPLETE BUILD ROADMAP & SYSTEM SPECIFICATION</span>
+          <span class="text-slate-500">|</span>
+          <span class="text-brand-400 font-semibold">litrun SDK</span>
+        </div>
+
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight sm:leading-none mb-6">
+          Deploy any LLM to any embedded Linux device <span class="bg-gradient-to-r from-brand-400 via-accent-400 to-brand-400 bg-clip-text text-transparent">in one command</span>.
+        </h1>
+
+        <p class="text-lg sm:text-xl text-slate-400 leading-relaxed mb-8">
+          A universal, lightweight open-source runtime that solves hardware fragmentation for on-device AI across Raspberry Pi, Orange Pi, industrial SoCs, and ARM64 / RISC-V SBCs.
+        </p>
+
+        <!-- Naming Verification Card -->
+        <div class="inline-flex flex-wrap items-center justify-center gap-3 p-2 px-4 rounded-xl glass-panel text-xs font-mono mb-10 border border-brand-500/20">
+          <span class="text-slate-400 font-sans font-medium">Registry Status:</span>
+          <span class="inline-flex items-center space-x-1 text-emerald-400 font-semibold bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-800/60">
+            <span>PyPI</span> <span>✓ Clear</span>
+          </span>
+          <span class="inline-flex items-center space-x-1 text-emerald-400 font-semibold bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-800/60">
+            <span>npm</span> <span>✓ Clear</span>
+          </span>
+          <span class="inline-flex items-center space-x-1 text-emerald-400 font-semibold bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-800/60">
+            <span>GitHub</span> <span>✓ Clear</span>
+          </span>
+          <span class="text-slate-400 font-sans font-medium ml-2">Verdict:</span>
+          <span class="text-brand-300 font-bold uppercase tracking-wider">100% Clean Brand</span>
+        </div>
+      </div>
+
+      <!-- Quick Stats Grid -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-12">
+        <div class="p-5 rounded-2xl glass-panel border border-slate-800 text-center hover:border-slate-700 transition-colors">
+          <div class="text-3xl sm:text-4xl font-extrabold text-white font-mono mb-1">12</div>
+          <div class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Month Roadmap</div>
+          <div class="text-[11px] text-slate-500 mt-1">4 sequential phases</div>
+        </div>
+        <div class="p-5 rounded-2xl glass-panel border border-slate-800 text-center hover:border-slate-700 transition-colors">
+          <div class="text-3xl sm:text-4xl font-extrabold text-brand-400 font-mono mb-1">4</div>
+          <div class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Build Phases</div>
+          <div class="text-[11px] text-slate-500 mt-1">Zero private lock-in</div>
+        </div>
+        <div class="p-5 rounded-2xl glass-panel border border-slate-800 text-center hover:border-slate-700 transition-colors">
+          <div class="text-3xl sm:text-4xl font-extrabold text-accent-400 font-mono mb-1">2B+</div>
+          <div class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Target Devices</div>
+          <div class="text-[11px] text-slate-500 mt-1">ARM64, NPU & RISC-V</div>
+        </div>
+        <div class="p-5 rounded-2xl glass-panel border border-slate-800 text-center hover:border-slate-700 transition-colors">
+          <div class="text-3xl sm:text-4xl font-extrabold text-white font-mono mb-1">$0</div>
+          <div class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Required to Start</div>
+          <div class="text-[11px] text-slate-500 mt-1">100% MIT Core</div>
+        </div>
+      </div>
+
+      <!-- Interactive Quick Experience Comparison Terminal -->
+      <div class="max-w-4xl mx-auto rounded-2xl overflow-hidden shadow-2xl border border-slate-800 bg-dark-950">
+        <div class="flex items-center justify-between px-4 py-3 bg-slate-900/90 border-b border-slate-800">
+          <div class="flex items-center space-x-2">
+            <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
+            <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+            <div class="w-3 h-3 rounded-full bg-emerald-500/80"></div>
+            <span class="text-xs font-mono text-slate-400 ml-2">bash — litrun run on Raspberry Pi 5</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+            <span class="text-[11px] font-mono text-slate-400">Target: Cortex-A76 (8GB)</span>
+          </div>
+        </div>
+        <div class="p-6 font-mono text-sm leading-relaxed text-slate-300 overflow-x-auto code-scroll">
+          <div class="text-slate-500 mb-2"># 1. Install litrun runtime in seconds (no toolchains, no cmake)</div>
+          <div class="text-slate-100 flex items-center justify-between group">
+            <div><span class="text-brand-400 font-bold">$</span> curl -sSL https://litrun.dev/install | sh</div>
+            <span class="text-xs text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity">Instant POSIX bootstrap</span>
+          </div>
+          <div class="text-emerald-400 text-xs mt-1">✓ Installed litrun v0.1.0 to /usr/local/bin/litrun</div>
+
+          <div class="text-slate-500 mt-4 mb-2"># 2. Run your first model with zero quantization guesswork</div>
+          <div class="text-slate-100"><span class="text-brand-400 font-bold">$</span> litrun run qwen2.5-0.5b</div>
+          <div class="mt-2 space-y-1 text-xs">
+            <div class="text-slate-300">→ <span class="text-brand-400 font-semibold">Detected:</span> Raspberry Pi 5 Model B (BCM2712 Cortex-A76, 8192 MB RAM)</div>
+            <div class="text-slate-300">→ <span class="text-accent-400 font-semibold">Selected:</span> qwen2.5-0.5b-Q4_K_M (optimal RAM envelope: 900MB required / 6800MB free)</div>
+            <div class="text-slate-300">→ <span class="text-slate-400">Binary:</span> pulling precompiled ARM64 a76+dotprod build... <span class="text-emerald-400">done</span> [cached]</div>
+            <div class="text-slate-300">→ <span class="text-slate-400">Model:</span> streaming weights from HuggingFace (397MB)... <span class="text-emerald-400">100% done</span></div>
+            <div class="text-emerald-400 font-semibold pt-1">→ Warmup complete. Running at 14.2 tokens/sec. Type to interact.</div>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-800 text-slate-400 text-xs">
+            <span class="text-brand-400">&gt;</span> <span class="text-white">Hello litrun, explain how you avoid out-of-memory crashes on embedded boards.</span><br>
+            <span class="text-slate-300 mt-1 block">litrun: "I integrate a dedicated C resource governor that probes memory cgroups and /proc/meminfo before model allocation, preventing kernel OOM killer panics..."</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Problem vs Solution Breakdown -->
+  <section id="problem" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-slate-800">
+    <div class="max-w-3xl mb-12">
+      <h2 class="text-xs uppercase tracking-widest font-mono text-brand-400 font-bold mb-2">Why Litrun Exists</h2>
+      <h3 class="text-3xl font-bold text-white tracking-tight">The Embedded AI Problem Nobody Solved</h3>
+      <p class="text-slate-400 mt-3 text-base">
+        Ollama excels on Apple Silicon and desktop Macs. llama.cpp works if you are an expert willing to compile with arcane flags. HuggingFace assumes infinite cloud GPUs. Every silicon vendor pushes proprietary, closed SDKs. <span class="text-white font-medium">litrun provides the missing neutral, hardware-aware runtime layer.</span>
+      </p>
+    </div>
+
+    <!-- Interactive Problem vs Solution Comparison Table -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Problem Side -->
+      <div class="p-6 rounded-2xl bg-red-950/20 border border-red-900/40">
+        <div class="flex items-center space-x-2.5 mb-6 text-red-400">
+          <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+          <h4 class="font-bold text-lg text-white">What Developers Suffer Through Today</h4>
+        </div>
+
+        <ul class="space-y-4 text-sm text-slate-300">
+          <li class="flex items-start space-x-3">
+            <span class="text-red-400 font-bold mt-0.5 font-mono">01.</span>
+            <div>
+              <strong class="text-white block font-medium">SoC & ISA Fragmentation:</strong>
+              Every single board (BCM2711, BCM2712, RK3588, TDA4VM) requires different compile flags, SIMD extensions (NEON, FP16, DotProd, i8mm), and vendor toolchains.
+            </div>
+          </li>
+          <li class="flex items-start space-x-3">
+            <span class="text-red-400 font-bold mt-0.5 font-mono">02.</span>
+            <div>
+              <strong class="text-white block font-medium">45-Minute On-Device Compilations:</strong>
+              Pi 4 compiling llama.cpp from source is painfully slow, thermal throttles after 10 minutes, and fails whenever memory is exhausted during linking.
+            </div>
+          </li>
+          <li class="flex items-start space-x-3">
+            <span class="text-red-400 font-bold mt-0.5 font-mono">03.</span>
+            <div>
+              <strong class="text-white block font-medium">Quantization Guesswork:</strong>
+              Developers must guess between Q4_K_M, Q5_K_S, IQ3_XS without knowing whether the KV cache + weights will fit their specific board RAM.
+            </div>
+          </li>
+          <li class="flex items-start space-x-3">
+            <span class="text-red-400 font-bold mt-0.5 font-mono">04.</span>
+            <div>
+              <strong class="text-white block font-medium">Disjoint Runtime Abstractions:</strong>
+              llama.cpp, ONNX Runtime, and vendor NPU SDKs (like Rockchip RKNN) all share zero API commonality. Code must be rewritten for each chip.
+            </div>
+          </li>
+          <li class="flex items-start space-x-3">
+            <span class="text-red-400 font-bold mt-0.5 font-mono">05.</span>
+            <div>
+              <strong class="text-white block font-medium">Silent Device Kernel Panics:</strong>
+              Zero safety guardrails. When RAM spikes during long context inference, the Linux OOM-killer randomly terminates services or crashes the board entirely.
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Solution Side (Litrun) -->
+      <div class="p-6 rounded-2xl bg-brand-950/20 border border-brand-900/40">
+        <div class="flex items-center space-x-2.5 mb-6 text-brand-400">
+          <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          <h4 class="font-bold text-lg text-white">How Litrun Resolves It Elegantly</h4>
+        </div>
+
+        <ul class="space-y-4 text-sm text-slate-300">
+          <li class="flex items-start space-x-3">
+            <span class="text-brand-400 font-bold mt-0.5 font-mono">01.</span>
+            <div>
+              <strong class="text-brand-300 block font-medium">Universal Hardware Fingerprinter:</strong>
+              A lightweight C binary probes <code class="text-xs bg-slate-800 px-1 py-0.5 rounded text-slate-200">/proc/cpuinfo</code>, devicetree model, and auxiliary vectors in &lt;5ms, producing a normalized hardware profile ID.
+            </div>
+          </li>
+          <li class="flex items-start space-x-3">
+            <span class="text-brand-400 font-bold mt-0.5 font-mono">02.</span>
+            <div>
+              <strong class="text-brand-300 block font-medium">Precompiled Multi-SoC Binary Registry:</strong>
+              Pre-built, cross-compiled inference binaries for each target SoC are hosted on GitHub Releases and pulled instantly like container layers.
+            </div>
+          </li>
+          <li class="flex items-start space-x-3">
+            <span class="text-brand-400 font-bold mt-0.5 font-mono">03.</span>
+            <div>
+              <strong class="text-brand-300 block font-medium">Hardware-Aware Model Registry:</strong>
+              Every curated model entry defines precise memory envelopes. Litrun selects the highest-accuracy quantization that safely fits inside free memory.
+            </div>
+          </li>
+          <li class="flex items-start space-x-3">
+            <span class="text-brand-400 font-bold mt-0.5 font-mono">04.</span>
+            <div>
+              <strong class="text-brand-300 block font-medium">Unified Inference API & Drop-in REST:</strong>
+              One unified CLI, Python SDK (<code class="text-xs bg-slate-800 px-1 py-0.5 rounded text-slate-200">from litrun import Model</code>), and OpenAI-compatible HTTP server (<code class="text-xs bg-slate-800 px-1 py-0.5 rounded text-slate-200">/v1/chat/completions</code>).
+            </div>
+          </li>
+          <li class="flex items-start space-x-3">
+            <span class="text-brand-400 font-bold mt-0.5 font-mono">05.</span>
+            <div>
+              <strong class="text-brand-300 block font-medium">Active Resource Governor:</strong>
+              Enforces hard RAM ceilings, monitors thermal zones, blocks dangerous allocations, and degrades gracefully to smaller quantized models before swapping.
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- System Architecture (5-Layer Deep Dive) -->
+  <section id="architecture" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-slate-800">
+    <div class="max-w-3xl mb-12">
+      <h2 class="text-xs uppercase tracking-widest font-mono text-brand-400 font-bold mb-2">System Design</h2>
+      <h3 class="text-3xl font-bold text-white tracking-tight">Five Layers, Independently Useful</h3>
+      <p class="text-slate-400 mt-3 text-base">
+        Litrun is designed with strict modular separation. Each layer has zero unnecessary dependencies and can be audited, tested in isolation, or embedded into third-party IoT stacks.
+      </p>
+    </div>
+
+    <!-- 5-Layer Stack Visualization -->
+    <div class="space-y-4">
+      <!-- Layer 1: User Surface -->
+      <div class="p-5 rounded-xl glass-panel border-l-4 border-l-brand-400 border-slate-800">
+        <div class="flex flex-col md:flex-row md:items-center justify-between mb-3">
+          <div class="flex items-center space-x-2">
+            <span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-brand-500/20 text-brand-300">LAYER 1</span>
+            <h4 class="font-bold text-white text-base">User Surface (CLI, SDK, REST)</h4>
+          </div>
+          <span class="text-xs font-mono text-slate-400 mt-1 md:mt-0">Developer & Tooling Integration Point</span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+          <div class="p-3 rounded-lg bg-slate-900/80 border border-slate-800">
+            <span class="font-mono text-brand-400 font-semibold text-xs block mb-1">CLI Surface</span>
+            <code class="text-xs text-slate-200 block">litrun run &lt;model&gt;</code>
+            <code class="text-xs text-slate-400 block mt-0.5">litrun pull / list / inspect / serve</code>
+          </div>
+          <div class="p-3 rounded-lg bg-slate-900/80 border border-slate-800">
+            <span class="font-mono text-accent-400 font-semibold text-xs block mb-1">Python SDK</span>
+            <code class="text-xs text-slate-200 block">from litrun import Model</code>
+            <span class="text-xs text-slate-400 block mt-0.5">Pythonic, async streaming, C ctypes bridge</span>
+          </div>
+          <div class="p-3 rounded-lg bg-slate-900/80 border border-slate-800">
+            <span class="font-mono text-emerald-400 font-semibold text-xs block mb-1">OpenAI Compatible REST</span>
+            <code class="text-xs text-slate-200 block">POST /v1/chat/completions</code>
+            <span class="text-xs text-slate-400 block mt-0.5">FastAPI server for local agent integration</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Layer 2: Orchestration Layer -->
+      <div class="p-5 rounded-xl glass-panel border-l-4 border-l-accent-400 border-slate-800">
+        <div class="flex flex-col md:flex-row md:items-center justify-between mb-3">
+          <div class="flex items-center space-x-2">
+            <span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-accent-500/20 text-accent-300">LAYER 2</span>
+            <h4 class="font-bold text-white text-base">Orchestration & Resource Governance</h4>
+          </div>
+          <span class="text-xs font-mono text-slate-400 mt-1 md:mt-0">Lifecycle & Safety Management</span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+          <div class="p-3 rounded-lg bg-slate-900/80 border border-slate-800">
+            <span class="font-medium text-white text-xs block mb-1">Session Manager</span>
+            <p class="text-xs text-slate-400">Context window caching, conversation state, token budget truncation, multi-turn history preservation.</p>
+          </div>
+          <div class="p-3 rounded-lg bg-slate-900/80 border border-slate-800">
+            <span class="font-medium text-white text-xs block mb-1">Resource Governor</span>
+            <p class="text-xs text-slate-400">Monitors swap activity, memory cgroup limits, and <code class="text-[11px] bg-slate-800 px-1 py-0.5 rounded">thermal_zone0</code> to prevent throttling or device crashes.</p>
+          </div>
+          <div class="p-3 rounded-lg bg-slate-900/80 border border-slate-800">
+            <span class="font-medium text-white text-xs block mb-1">Model Selector</span>
+            <p class="text-xs text-slate-400">Evaluates current hardware profile against model metadata to pick the highest accuracy quantization fitting in RAM.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Layer 3: Hardware Abstraction Layer -->
+      <div class="p-5 rounded-xl glass-panel border-l-4 border-l-purple-400 border-slate-800">
+        <div class="flex flex-col md:flex-row md:items-center justify-between mb-3">
+          <div class="flex items-center space-x-2">
+            <span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-purple-500/20 text-purple-300">LAYER 3</span>
+            <h4 class="font-bold text-white text-base">Hardware Abstraction (C Engine)</h4>
+          </div>
+          <span class="text-xs font-mono text-slate-400 mt-1 md:mt-0">Zero-Dependency Native Core</span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+          <div class="p-3 rounded-lg bg-slate-900/80 border border-slate-800">
+            <span class="font-medium text-white text-xs block mb-1">Hardware Fingerprinter</span>
+            <p class="text-xs text-slate-400">Extracts SoC model, CPU core topology, SIMD ISA flags (NEON, FP16, DotProd, i8mm), memory headroom, and NPU availability.</p>
+          </div>
+          <div class="p-3 rounded-lg bg-slate-900/80 border border-slate-800">
+            <span class="font-medium text-white text-xs block mb-1">Binary Resolver</span>
+            <p class="text-xs text-slate-400">Fetches and cryptographically validates the precompiled binary tuned specifically for the device's microarchitecture.</p>
+          </div>
+          <div class="p-3 rounded-lg bg-slate-900/80 border border-slate-800">
+            <span class="font-medium text-white text-xs block mb-1">Delegate Router</span>
+            <p class="text-xs text-slate-400">Routes execution graphs across CPU vector units, OpenCL GPU compute, or vendor NPU acceleration units.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Layer 4: Pluggable Backends -->
+      <div class="p-5 rounded-xl glass-panel border-l-4 border-l-amber-400 border-slate-800">
+        <div class="flex flex-col md:flex-row md:items-center justify-between mb-3">
+          <div class="flex items-center space-x-2">
+            <span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300">LAYER 4</span>
+            <h4 class="font-bold text-white text-base">Pluggable Inference Backends</h4>
+          </div>
+          <span class="text-xs font-mono text-slate-400 mt-1 md:mt-0">Specialized Execution Adapters</span>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+          <div class="p-3 rounded-lg bg-slate-900/80 border border-slate-800">
+            <span class="font-medium text-white text-xs block mb-0.5">llama.cpp</span>
+            <span class="text-xs text-slate-400 block">Primary GGUF CPU engine (ARM NEON / DotProd)</span>
+          </div>
+          <div class="p-3 rounded-lg bg-slate-900/80 border border-slate-800">
+            <span class="font-medium text-white text-xs block mb-0.5">ONNX Runtime</span>
+            <span class="text-xs text-slate-400 block">Optimized for vision models & text embeddings</span>
+          </div>
+          <div class="p-3 rounded-lg bg-slate-900/80 border border-slate-800">
+            <span class="font-medium text-white text-xs block mb-0.5">RKNN Toolkit 2</span>
+            <span class="text-xs text-slate-400 block">6 TOPS NPU on Orange Pi 5 / RK3588 boards</span>
+          </div>
+          <div class="p-3 rounded-lg bg-slate-900/80 border border-slate-800">
+            <span class="font-medium text-white text-xs block mb-0.5">LiteRT / TFLite</span>
+            <span class="text-xs text-slate-400 block">Lightweight audio & classification edge tasks</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Layer 5: Registries & Data Stores -->
+      <div class="p-5 rounded-xl glass-panel border-l-4 border-l-blue-400 border-slate-800">
+        <div class="flex flex-col md:flex-row md:items-center justify-between mb-3">
+          <div class="flex items-center space-x-2">
+            <span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-blue-500/20 text-blue-300">LAYER 5</span>
+            <h4 class="font-bold text-white text-base">Distributed Metadata Registries</h4>
+          </div>
+          <span class="text-xs font-mono text-slate-400 mt-1 md:mt-0">Flat YAML + GitHub Releases CDN</span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+          <div class="p-3 rounded-lg bg-slate-900/80 border border-slate-800">
+            <span class="font-medium text-white text-xs block mb-1">Model Registry</span>
+            <p class="text-xs text-slate-400">Curated YAML mapping model IDs to HuggingFace URLs, SHA-256 checksums, and hardware RAM envelopes.</p>
+          </div>
+          <div class="p-3 rounded-lg bg-slate-900/80 border border-slate-800">
+            <span class="font-medium text-white text-xs block mb-1">Binary Registry</span>
+            <p class="text-xs text-slate-400">Manifest of precompiled engine builds indexed by SoC target, ISA features, and operating system.</p>
+          </div>
+          <div class="p-3 rounded-lg bg-slate-900/80 border border-slate-800">
+            <span class="font-medium text-white text-xs block mb-1">Community Profile DB</span>
+            <p class="text-xs text-slate-400">Crowdsourced benchmarks (tokens/sec, thermals, tokens/joule) submitted by community devices.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Hardware Fingerprint & Model Selector Simulator -->
+  <section id="simulator" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-slate-800">
+    <div class="max-w-3xl mb-8">
+      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-brand-500/10 border border-brand-500/20 text-xs font-mono text-brand-400 mb-2">
+        <span>⚡ INTERACTIVE RUNTIME SIMULATOR</span>
+      </div>
+      <h3 class="text-3xl font-bold text-white tracking-tight">Experience How Litrun Decides</h3>
+      <p class="text-slate-400 mt-2 text-base">
+        Select a target embedded board and model below to see how Litrun's C fingerprinter and resource governor make deterministic deployment decisions in real time.
+      </p>
+    </div>
+
+    <!-- Simulator Container -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 glass-panel p-6 rounded-2xl border border-slate-800">
+      <!-- Left Controls: Board & Model Selector -->
+      <div class="lg:col-span-5 space-y-6">
+        <div>
+          <label class="block text-xs font-mono uppercase text-slate-400 font-bold mb-2">1. Select Embedded Board Target</label>
+          <div class="space-y-2" id="boardSelectorContainer">
+            <!-- Buttons dynamically generated or statically wired -->
+            <button data-board="rpi5" class="sim-board-btn w-full text-left p-3 rounded-xl border border-brand-500 bg-brand-500/10 text-white flex items-center justify-between transition-all">
+              <div>
+                <div class="font-semibold text-sm">Raspberry Pi 5 Model B</div>
+                <div class="text-xs text-slate-400">BCM2712 • Cortex-A76 • 8GB RAM</div>
+              </div>
+              <span class="text-xs font-mono font-bold text-brand-400 bg-brand-500/20 px-2 py-0.5 rounded">Phase 1</span>
+            </button>
+            <button data-board="rpi4" class="sim-board-btn w-full text-left p-3 rounded-xl border border-slate-800 bg-slate-900/60 text-slate-300 hover:border-slate-700 hover:text-white flex items-center justify-between transition-all">
+              <div>
+                <div class="font-semibold text-sm">Raspberry Pi 4 Model B</div>
+                <div class="text-xs text-slate-400">BCM2711 • Cortex-A72 • 4GB RAM</div>
+              </div>
+              <span class="text-xs font-mono text-slate-400 bg-slate-800 px-2 py-0.5 rounded">Phase 1</span>
+            </button>
+            <button data-board="orangepi5" class="sim-board-btn w-full text-left p-3 rounded-xl border border-slate-800 bg-slate-900/60 text-slate-300 hover:border-slate-700 hover:text-white flex items-center justify-between transition-all">
+              <div>
+                <div class="font-semibold text-sm">Orange Pi 5 (RK3588)</div>
+                <div class="text-xs text-slate-400">RK3588 • 8-Core + 6 TOPS NPU • 16GB RAM</div>
+              </div>
+              <span class="text-xs font-mono text-purple-400 bg-purple-500/20 px-2 py-0.5 rounded">Phase 2 NPU</span>
+            </button>
+            <button data-board="jetson" class="sim-board-btn w-full text-left p-3 rounded-xl border border-slate-800 bg-slate-900/60 text-slate-300 hover:border-slate-700 hover:text-white flex items-center justify-between transition-all">
+              <div>
+                <div class="font-semibold text-sm">NVIDIA Jetson Orin Nano</div>
+                <div class="text-xs text-slate-400">Orin SoC • Ampere GPU / NVDLA • 8GB RAM</div>
+              </div>
+              <span class="text-xs font-mono text-emerald-400 bg-emerald-500/20 px-2 py-0.5 rounded">Phase 2</span>
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-mono uppercase text-slate-400 font-bold mb-2">2. Select LLM Model to Test</label>
+          <div class="grid grid-cols-2 gap-2" id="modelSelectorContainer">
+            <button data-model="qwen05" class="sim-model-btn p-2.5 rounded-lg border border-brand-500 bg-brand-500/10 text-white text-xs font-mono font-medium text-left transition-all">
+              <span class="block font-bold">Qwen2.5-0.5B</span>
+              <span class="text-[11px] text-slate-400">Size: ~397MB</span>
+            </button>
+            <button data-model="qwen15" class="sim-model-btn p-2.5 rounded-lg border border-slate-800 bg-slate-900/60 text-slate-300 hover:border-slate-700 text-xs font-mono font-medium text-left transition-all">
+              <span class="block font-bold">Qwen2.5-1.5B</span>
+              <span class="text-[11px] text-slate-400">Size: ~980MB</span>
+            </button>
+            <button data-model="llama32" class="sim-model-btn p-2.5 rounded-lg border border-slate-800 bg-slate-900/60 text-slate-300 hover:border-slate-700 text-xs font-mono font-medium text-left transition-all">
+              <span class="block font-bold">Llama3.2-1B</span>
+              <span class="text-[11px] text-slate-400">Size: ~820MB</span>
+            </button>
+            <button data-model="phi3mini" class="sim-model-btn p-2.5 rounded-lg border border-slate-800 bg-slate-900/60 text-slate-300 hover:border-slate-700 text-xs font-mono font-medium text-left transition-all">
+              <span class="block font-bold">Phi-3-Mini (3.8B)</span>
+              <span class="text-[11px] text-slate-400">Size: ~2.4GB</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Output: Live Terminal & Diagnostic Card -->
+      <div class="lg:col-span-7 flex flex-col justify-between space-y-4">
+        <!-- Terminal Output -->
+        <div class="rounded-xl overflow-hidden bg-dark-950 border border-slate-800 p-4 font-mono text-xs">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-3 text-slate-400">
+            <span>litrun runtime execution telemetry</span>
+            <span id="simStatusBadge" class="text-emerald-400 font-bold">● GOVERNOR PASS</span>
+          </div>
+
+          <div id="simLogOutput" class="space-y-1.5 text-slate-300 leading-relaxed min-h-[160px]">
+            <!-- Dynamic Log output populated via JS -->
+          </div>
+        </div>
+
+        <!-- Decision Metrics Dashboard -->
+        <div class="grid grid-cols-3 gap-3">
+          <div class="p-3 rounded-xl bg-slate-900/90 border border-slate-800">
+            <span class="text-[11px] uppercase tracking-wider text-slate-400 font-medium block">RAM Envelope</span>
+            <span id="simRamMetric" class="text-lg font-bold font-mono text-white mt-1 block">900 MB / 8 GB</span>
+            <span id="simRamPercent" class="text-[11px] text-brand-400">11% system memory</span>
+          </div>
+          <div class="p-3 rounded-xl bg-slate-900/90 border border-slate-800">
+            <span class="text-[11px] uppercase tracking-wider text-slate-400 font-medium block">Selected Quant</span>
+            <span id="simQuantMetric" class="text-lg font-bold font-mono text-accent-400 mt-1 block">Q4_K_M</span>
+            <span class="text-[11px] text-slate-400">GGUF format</span>
+          </div>
+          <div class="p-3 rounded-xl bg-slate-900/90 border border-slate-800">
+            <span class="text-[11px] uppercase tracking-wider text-slate-400 font-medium block">Inference Speed</span>
+            <span id="simSpeedMetric" class="text-lg font-bold font-mono text-emerald-400 mt-1 block">14.2 tok/s</span>
+            <span id="simBackendMetric" class="text-[11px] text-slate-400">CPU NEON + dotprod</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 Phases 12 Months Execution Plan -->
+  <section id="phases" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-slate-800">
+    <div class="max-w-3xl mb-12">
+      <h2 class="text-xs uppercase tracking-widest font-mono text-brand-400 font-bold mb-2">Execution Roadmap</h2>
+      <h3 class="text-3xl font-bold text-white tracking-tight">Four Phases, Twelve Months</h3>
+      <p class="text-slate-400 mt-3 text-base">
+        "Ship early, get feedback, iterate." Each phase delivers a production-usable release. You never build in private for months without user validation.
+      </p>
+    </div>
+
+    <!-- Phase Tabs / Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <!-- Phase 1 -->
+      <div class="p-5 rounded-2xl glass-panel border border-brand-500/40 relative">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-mono font-bold text-brand-400 bg-brand-500/10 px-2 py-0.5 rounded">Phase 1</span>
+          <span class="text-xs text-slate-400 font-mono">Month 1 – 3</span>
+        </div>
+        <h4 class="font-bold text-white text-base mb-2">Hardware Foundation</h4>
+        <p class="text-xs text-slate-400 mb-4 leading-relaxed">
+          The goal: one single command working cold on Raspberry Pi 4 & Pi 5. Detect hardware, download tuned binary, run.
+        </p>
+        <div class="text-[11px] font-mono text-brand-300 font-semibold bg-brand-950/40 p-2 rounded border border-brand-800/40">
+          ★ Milestone: W12 Public Launch (HN, Reddit, 100+ Stars)
+        </div>
+      </div>
+
+      <!-- Phase 2 -->
+      <div class="p-5 rounded-2xl glass-panel border border-slate-800">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-mono font-bold text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded">Phase 2</span>
+          <span class="text-xs text-slate-400 font-mono">Month 4 – 6</span>
+        </div>
+        <h4 class="font-bold text-white text-base mb-2">NPU & 10+ Boards</h4>
+        <p class="text-xs text-slate-400 mb-4 leading-relaxed">
+          Integrate RK3588 NPU (Orange Pi 5 6 TOPS), ONNX Runtime vision/embeddings, QEMU CI pipeline, and public benchmark leaderboard.
+        </p>
+        <div class="text-[11px] font-mono text-purple-300 font-semibold bg-purple-950/40 p-2 rounded border border-purple-800/40">
+          ★ Milestone: 10 Boards + RKNN NPU + Benchmarks
+        </div>
+      </div>
+
+      <!-- Phase 3 -->
+      <div class="p-5 rounded-2xl glass-panel border border-slate-800">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-mono font-bold text-accent-400 bg-accent-500/10 px-2 py-0.5 rounded">Phase 3</span>
+          <span class="text-xs text-slate-400 font-mono">Month 7 – 9</span>
+        </div>
+        <h4 class="font-bold text-white text-base mb-2">DX, Vision & Paper</h4>
+        <p class="text-xs text-slate-400 mb-4 leading-relaxed">
+          Modelfile specification, MiniCPM-V & moondream2 vision, RISC-V experimental support, PyPI package, MLSys/arXiv paper submission.
+        </p>
+        <div class="text-[11px] font-mono text-accent-300 font-semibold bg-accent-950/40 p-2 rounded border border-accent-800/40">
+          ★ Milestone: MLSys 2027 / MobiSys 2027 Papers
+        </div>
+      </div>
+
+      <!-- Phase 4 -->
+      <div class="p-5 rounded-2xl glass-panel border border-slate-800">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-mono font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded">Phase 4</span>
+          <span class="text-xs text-slate-400 font-mono">Month 10 – 12</span>
+        </div>
+        <h4 class="font-bold text-white text-base mb-2">Fleet Management</h4>
+        <p class="text-xs text-slate-400 mb-4 leading-relaxed">
+          Enterprise tier: <code class="text-[11px] bg-slate-800 px-1 rounded">litrun fleet</code>, OTA model update protocol, hardware signing, commercial partnerships.
+        </p>
+        <div class="text-[11px] font-mono text-amber-300 font-semibold bg-amber-950/40 p-2 rounded border border-amber-800/40">
+          ★ Milestone: First Enterprise Contracts ($10K–$50K)
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 1 Week-by-Week Breakdown with Interactive Checklist -->
+    <div class="glass-panel rounded-2xl p-6 border border-slate-800">
+      <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-800">
+        <div>
+          <h4 class="text-lg font-bold text-white">Phase 1: Week-by-Week Execution Matrix</h4>
+          <p class="text-xs text-slate-400 mt-1">Interactive progress tracker for the initial 12-week foundation phase.</p>
+        </div>
+        <div class="text-right">
+          <span id="checklistProgressText" class="text-xs font-mono font-bold text-brand-400">0 of 8 milestones completed</span>
+        </div>
+      </div>
+
+      <div class="space-y-3" id="phase1Checklist">
+        <!-- Week 1-2 -->
+        <label class="flex items-start space-x-3 p-3 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 cursor-pointer transition-colors">
+          <input type="checkbox" class="w4-check mt-1 rounded border-slate-700 text-brand-500 focus:ring-0 focus:ring-offset-0 bg-slate-800">
+          <div class="flex-1 grid grid-cols-1 sm:grid-cols-12 gap-2 text-xs">
+            <span class="sm:col-span-2 font-mono font-bold text-brand-400">W1 – W2</span>
+            <div class="sm:col-span-5 font-medium text-white">Hardware fingerprinter in pure C</div>
+            <div class="sm:col-span-5 text-slate-400">Outputs normalized JSON on Raspberry Pi 4 and Pi 5 cold boot.</div>
+          </div>
+        </label>
+
+        <!-- Week 3 -->
+        <label class="flex items-start space-x-3 p-3 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 cursor-pointer transition-colors">
+          <input type="checkbox" class="w4-check mt-1 rounded border-slate-700 text-brand-500 focus:ring-0 focus:ring-offset-0 bg-slate-800">
+          <div class="flex-1 grid grid-cols-1 sm:grid-cols-12 gap-2 text-xs">
+            <span class="sm:col-span-2 font-mono font-bold text-brand-400">W3</span>
+            <div class="sm:col-span-5 font-medium text-white">Binary registry schema + 2 prebuilt binaries</div>
+            <div class="sm:col-span-5 text-slate-400">GitHub Release with Pi 4 and Pi 5 tuned llama.cpp builds.</div>
+          </div>
+        </label>
+
+        <!-- Week 4 -->
+        <label class="flex items-start space-x-3 p-3 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 cursor-pointer transition-colors">
+          <input type="checkbox" class="w4-check mt-1 rounded border-slate-700 text-brand-500 focus:ring-0 focus:ring-offset-0 bg-slate-800">
+          <div class="flex-1 grid grid-cols-1 sm:grid-cols-12 gap-2 text-xs">
+            <span class="sm:col-span-2 font-mono font-bold text-brand-400">W4</span>
+            <div class="sm:col-span-5 font-medium text-white">Binary resolver + Model registry (5 initial models)</div>
+            <div class="sm:col-span-5 text-slate-400">Pulls matching binary and optimal GGUF quantization per board.</div>
+          </div>
+        </label>
+
+        <!-- Week 5-6 -->
+        <label class="flex items-start space-x-3 p-3 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 cursor-pointer transition-colors">
+          <input type="checkbox" class="w4-check mt-1 rounded border-slate-700 text-brand-500 focus:ring-0 focus:ring-offset-0 bg-slate-800">
+          <div class="flex-1 grid grid-cols-1 sm:grid-cols-12 gap-2 text-xs">
+            <span class="sm:col-span-2 font-mono font-bold text-brand-400">W5 – W6</span>
+            <div class="sm:col-span-5 font-medium text-white">litrun CLI: run, pull, list, inspect</div>
+            <div class="sm:col-span-5 text-slate-400">All four commands working end-to-end on Raspberry Pi OS.</div>
+          </div>
+        </label>
+
+        <!-- Week 7 -->
+        <label class="flex items-start space-x-3 p-3 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 cursor-pointer transition-colors">
+          <input type="checkbox" class="w4-check mt-1 rounded border-slate-700 text-brand-500 focus:ring-0 focus:ring-offset-0 bg-slate-800">
+          <div class="flex-1 grid grid-cols-1 sm:grid-cols-12 gap-2 text-xs">
+            <span class="sm:col-span-2 font-mono font-bold text-brand-400">W7</span>
+            <div class="sm:col-span-5 font-medium text-white">Resource Governor (cgroups & thermal monitoring)</div>
+            <div class="sm:col-span-5 text-slate-400">Refuses or downgrades models exceeding RAM before OOM kill.</div>
+          </div>
+        </label>
+
+        <!-- Week 8 -->
+        <label class="flex items-start space-x-3 p-3 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 cursor-pointer transition-colors">
+          <input type="checkbox" class="w4-check mt-1 rounded border-slate-700 text-brand-500 focus:ring-0 focus:ring-offset-0 bg-slate-800">
+          <div class="flex-1 grid grid-cols-1 sm:grid-cols-12 gap-2 text-xs">
+            <span class="sm:col-span-2 font-mono font-bold text-brand-400">W8</span>
+            <div class="sm:col-span-5 font-medium text-white">POSIX Installer script (curl | sh) + README</div>
+            <div class="sm:col-span-5 text-slate-400">Verified working on a fresh Raspberry Pi OS 64-bit install.</div>
+          </div>
+        </label>
+
+        <!-- Week 9-10 -->
+        <label class="flex items-start space-x-3 p-3 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 cursor-pointer transition-colors">
+          <input type="checkbox" class="w4-check mt-1 rounded border-slate-700 text-brand-500 focus:ring-0 focus:ring-offset-0 bg-slate-800">
+          <div class="flex-1 grid grid-cols-1 sm:grid-cols-12 gap-2 text-xs">
+            <span class="sm:col-span-2 font-mono font-bold text-brand-400">W9 – W10</span>
+            <div class="sm:col-span-5 font-medium text-white">Python SDK + OpenAI REST Server (litrun serve)</div>
+            <div class="sm:col-span-5 text-slate-400"><code class="text-[11px] bg-slate-800 px-1 rounded">from litrun import Model</code> and local FastAPI server live.</div>
+          </div>
+        </label>
+
+        <!-- Week 11-12 -->
+        <label class="flex items-start space-x-3 p-3 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 cursor-pointer transition-colors">
+          <input type="checkbox" class="w4-check mt-1 rounded border-slate-700 text-brand-500 focus:ring-0 focus:ring-offset-0 bg-slate-800">
+          <div class="flex-1 grid grid-cols-1 sm:grid-cols-12 gap-2 text-xs">
+            <span class="sm:col-span-2 font-mono font-bold text-emerald-400">W11 – W12</span>
+            <div class="sm:col-span-5 font-medium text-white">Public Launch (GitHub + HackerNews + Reddit)</div>
+            <div class="sm:col-span-5 text-slate-400">Target: 100+ GitHub Stars within 48h of Show HN.</div>
+          </div>
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <!-- Repository Structure & Code Specifications -->
+  <section id="structure" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-slate-800">
+    <div class="max-w-3xl mb-12">
+      <h2 class="text-xs uppercase tracking-widest font-mono text-brand-400 font-bold mb-2">Clean Monorepo Layout</h2>
+      <h3 class="text-3xl font-bold text-white tracking-tight">Engineered for Professional Open Source</h3>
+      <p class="text-slate-400 mt-3 text-base">
+        A clean, testable monorepo layout combining a high-performance C core with an ergonomic Python SDK and CLI.
+      </p>
+    </div>
+
+    <!-- Directory Tree & Code Viewer Tabs -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <!-- File Tree Nav -->
+      <div class="lg:col-span-5 glass-panel p-5 rounded-2xl border border-slate-800 font-mono text-xs">
+        <div class="text-slate-400 font-bold uppercase tracking-wider mb-3 text-[11px]">Repository Directory Map</div>
+        <div class="space-y-1 text-slate-300">
+          <div class="text-white font-bold">litrun/</div>
+          <div class="pl-3 border-l border-slate-800 space-y-1">
+            <div>├── <span class="text-brand-400 font-semibold">core/</span> <span class="text-slate-500"># Pure C99/POSIX</span></div>
+            <div class="pl-4 border-l border-slate-800 space-y-1 text-slate-400">
+              <div>├── <span class="text-slate-200">fingerprint/</span> <span class="text-slate-500"># SoC & ISA probing</span></div>
+              <div>├── <span class="text-slate-200">governor/</span> <span class="text-slate-500"># RAM/cgroups/thermal</span></div>
+              <div>├── <span class="text-slate-200">backends/</span> <span class="text-slate-500"># llama.cpp, RKNN</span></div>
+              <div>└── <span class="text-slate-200">CMakeLists.txt</span></div>
+            </div>
+            <div>├── <span class="text-accent-400 font-semibold">sdk/</span> <span class="text-slate-500"># Python SDK (pip install litrun)</span></div>
+            <div class="pl-4 border-l border-slate-800 space-y-1 text-slate-400">
+              <div>├── <span class="text-slate-200">litrun/</span></div>
+              <div class="pl-4 border-l border-slate-800 space-y-0.5 text-slate-400">
+                <div>├── <span class="text-slate-300">model.py</span> <span class="text-slate-500"># Load, stream</span></div>
+                <div>├── <span class="text-slate-300">hardware.py</span> <span class="text-slate-500"># C wrapper</span></div>
+                <div>├── <span class="text-slate-300">registry.py</span> <span class="text-slate-500"># Cache/pull</span></div>
+                <div>├── <span class="text-slate-300">session.py</span> <span class="text-slate-500"># Context</span></div>
+                <div>└── <span class="text-slate-300">server.py</span> <span class="text-slate-500"># REST API</span></div>
+              </div>
+              <div>└── <span class="text-slate-200">pyproject.toml</span></div>
+            </div>
+            <div>├── <span class="text-purple-400 font-semibold">cli/</span> <span class="text-slate-500"># CLI implementation</span></div>
+            <div class="pl-4 border-l border-slate-800 space-y-1 text-slate-400">
+              <div>├── <span class="text-slate-300">run.py</span> / <span class="text-slate-300">pull.py</span> / <span class="text-slate-300">list.py</span></div>
+              <div>└── <span class="text-slate-300">inspect.py</span> <span class="text-slate-500"># Hardware report</span></div>
+            </div>
+            <div>├── <span class="text-amber-400 font-semibold">registry/</span> <span class="text-slate-500"># Flat YAML registries</span></div>
+            <div class="pl-4 border-l border-slate-800 space-y-1 text-slate-400">
+              <div>├── <span class="text-slate-300">models.yaml</span></div>
+              <div>├── <span class="text-slate-300">hardware.yaml</span></div>
+              <div>└── <span class="text-slate-300">binaries.yaml</span></div>
+            </div>
+            <div>├── <span class="text-slate-400">scripts/</span> <span class="text-slate-500"># Cross-compilation scripts</span></div>
+            <div>├── <span class="text-slate-400">tests/</span> <span class="text-slate-500"># QEMU multi-arch tests</span></div>
+            <div>├── <span class="text-slate-400">docs/</span> <span class="text-slate-500"># Docusaurus documentation</span></div>
+            <div>└── <span class="text-emerald-400">README.md</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Code Tab Viewer -->
+      <div class="lg:col-span-7 rounded-2xl overflow-hidden border border-slate-800 bg-dark-950 flex flex-col">
+        <!-- Tabs Header -->
+        <div class="flex items-center space-x-1 p-2 bg-slate-900 border-b border-slate-800 overflow-x-auto code-scroll">
+          <button data-tab="c-core" class="code-tab-btn px-3 py-1.5 rounded-lg text-xs font-mono font-medium text-white bg-slate-800 border border-slate-700 transition-colors">fingerprint.c</button>
+          <button data-tab="yaml-model" class="code-tab-btn px-3 py-1.5 rounded-lg text-xs font-mono font-medium text-slate-400 hover:text-white transition-colors">models.yaml</button>
+          <button data-tab="py-sdk" class="code-tab-btn px-3 py-1.5 rounded-lg text-xs font-mono font-medium text-slate-400 hover:text-white transition-colors">model.py (SDK)</button>
+          <button data-tab="ci-yaml" class="code-tab-btn px-3 py-1.5 rounded-lg text-xs font-mono font-medium text-slate-400 hover:text-white transition-colors">ci.yml (QEMU)</button>
+        </div>
+
+        <!-- Tab 1: C Core -->
+        <div id="tab-c-core" class="code-tab-content p-4 font-mono text-xs text-slate-300 overflow-x-auto code-scroll leading-relaxed flex-1">
+          <pre><code><span class="text-slate-500">/* litrun core: hardware fingerprinting on embedded Linux */</span>
+<span class="text-purple-400">#include</span> <span class="text-emerald-300">&lt;stdio.h&gt;</span>
+<span class="text-purple-400">#include</span> <span class="text-emerald-300">&lt;string.h&gt;</span>
+<span class="text-purple-400">#include</span> <span class="text-emerald-300">&lt;sys/auxv.h&gt;</span>
+<span class="text-purple-400">#include</span> <span class="text-emerald-300">&lt;sys/sysinfo.h&gt;</span>
+
+<span class="text-brand-400">typedef struct</span> {
+    <span class="text-brand-400">char</span> board_name[<span class="text-amber-400">128</span>];
+    <span class="text-brand-400">char</span> soc[<span class="text-amber-400">64</span>];
+    <span class="text-brand-400">int</span>  cores;
+    <span class="text-brand-400">long</span> ram_total_mb;
+    <span class="text-brand-400">long</span> ram_avail_mb;
+    <span class="text-brand-400">int</span>  has_neon;
+    <span class="text-brand-400">int</span>  has_dotprod;
+    <span class="text-brand-400">int</span>  has_i8mm;
+} litrun_hw_profile_t;
+
+<span class="text-brand-400">int</span> <span class="text-accent-400">litrun_probe_hardware</span>(litrun_hw_profile_t *p) {
+    <span class="text-brand-400">struct</span> sysinfo si;
+    <span class="text-accent-400">sysinfo</span>(&si);
+    p-&gt;ram_total_mb = si.totalram / (<span class="text-amber-400">1024</span> * <span class="text-amber-400">1024</span>);
+    p-&gt;ram_avail_mb = si.freeram / (<span class="text-amber-400">1024</span> * <span class="text-amber-400">1024</span>);
+
+    <span class="text-slate-500">/* Probe devicetree model (Raspberry Pi, Orange Pi, Rockchip) */</span>
+    FILE *f = <span class="text-accent-400">fopen</span>(<span class="text-emerald-300">"/sys/firmware/devicetree/base/model"</span>, <span class="text-emerald-300">"r"</span>);
+    <span class="text-purple-400">if</span> (f) {
+        <span class="text-accent-400">fgets</span>(p-&gt;board_name, <span class="text-brand-400">sizeof</span>(p-&gt;board_name), f);
+        <span class="text-accent-400">fclose</span>(f);
+    }
+
+    <span class="text-slate-500">/* Query ARM64 auxiliary vector hardware capabilities */</span>
+<span class="text-purple-400">#ifdef</span> __aarch64__
+    <span class="text-brand-400">unsigned long</span> hwcap = <span class="text-accent-400">getauxval</span>(AT_HWCAP);
+    p-&gt;has_neon = (hwcap & HWCAP_ASIMD) ? <span class="text-amber-400">1</span> : <span class="text-amber-400">0</span>;
+    p-&gt;has_dotprod = (hwcap & HWCAP_ASIMDDP) ? <span class="text-amber-400">1</span> : <span class="text-amber-400">0</span>;
+<span class="text-purple-400">#endif</span>
+    <span class="text-purple-400">return</span> <span class="text-amber-400">0</span>;
+}</code></pre>
+        </div>
+
+        <!-- Tab 2: YAML Model -->
+        <div id="tab-yaml-model" class="code-tab-content hidden p-4 font-mono text-xs text-slate-300 overflow-x-auto code-scroll leading-relaxed flex-1">
+          <pre><code><span class="text-slate-500"># litrun model registry schema</span>
+<span class="text-brand-400">id</span>: <span class="text-emerald-300">qwen2.5-0.5b</span>
+<span class="text-brand-400">name</span>: <span class="text-emerald-300">"Qwen 2.5 0.5B Instruct"</span>
+<span class="text-brand-400">family</span>: <span class="text-emerald-300">qwen</span>
+<span class="text-brand-400">context_length</span>: <span class="text-amber-400">32768</span>
+<span class="text-brand-400">variants</span>:
+  - <span class="text-brand-400">quant</span>: <span class="text-emerald-300">Q4_K_M</span>
+    <span class="text-brand-400">size_mb</span>: <span class="text-amber-400">397</span>
+    <span class="text-brand-400">ram_required_mb</span>: <span class="text-amber-400">900</span>
+    <span class="text-brand-400">url</span>: <span class="text-emerald-300">https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct-GGUF/resolve/main/qwen2.5-0.5b-instruct-q4_k_m.gguf</span>
+    <span class="text-brand-400">sha256</span>: <span class="text-slate-400">a3f9e218c8b...</span>
+    <span class="text-brand-400">hardware_profiles</span>:
+      - <span class="text-brand-400">profile</span>: <span class="text-emerald-300">rpi4-bcm2711-4gb</span>
+        <span class="text-brand-400">tokens_per_sec</span>: <span class="text-amber-400">8.2</span>
+        <span class="text-brand-400">recommended</span>: <span class="text-accent-400">true</span>
+      - <span class="text-brand-400">profile</span>: <span class="text-emerald-300">rpi5-bcm2712-8gb-a76</span>
+        <span class="text-brand-400">tokens_per_sec</span>: <span class="text-amber-400">14.2</span>
+        <span class="text-brand-400">recommended</span>: <span class="text-accent-400">true</span></code></pre>
+        </div>
+
+        <!-- Tab 3: Python SDK -->
+        <div id="tab-py-sdk" class="code-tab-content hidden p-4 font-mono text-xs text-slate-300 overflow-x-auto code-scroll leading-relaxed flex-1">
+          <pre><code><span class="text-slate-500"># Python SDK: from litrun import Model</span>
+<span class="text-purple-400">from</span> litrun <span class="text-purple-400">import</span> Model
+
+<span class="text-slate-500"># Automatically resolves hardware, checks RAM, pulls binary & model</span>
+model = Model.<span class="text-accent-400">load</span>(<span class="text-emerald-300">"qwen2.5-0.5b"</span>)
+
+<span class="text-slate-500"># Stream tokens directly in Python</span>
+<span class="text-purple-400">for</span> chunk <span class="text-purple-400">in</span> model.<span class="text-accent-400">stream</span>(<span class="text-emerald-300">"Summarize sensor anomaly report."</span>):
+    <span class="text-accent-400">print</span>(chunk, end=<span class="text-emerald-300">""</span>, flush=<span class="text-accent-400">True</span>)
+
+<span class="text-slate-500"># Or start the local OpenAI-compatible REST server</span>
+<span class="text-slate-500"># model.serve(host="0.0.0.0", port=8080)</span></code></pre>
+        </div>
+
+        <!-- Tab 4: CI Workflow -->
+        <div id="tab-ci-yaml" class="code-tab-content hidden p-4 font-mono text-xs text-slate-300 overflow-x-auto code-scroll leading-relaxed flex-1">
+          <pre><code><span class="text-brand-400">name</span>: <span class="text-emerald-300">Cross-Compile & QEMU Test</span>
+<span class="text-brand-400">on</span>: [<span class="text-emerald-300">push</span>, <span class="text-emerald-300">pull_request</span>]
+<span class="text-brand-400">jobs</span>:
+  <span class="text-brand-400">test-arm64</span>:
+    <span class="text-brand-400">runs-on</span>: <span class="text-emerald-300">ubuntu-latest</span>
+    <span class="text-brand-400">steps</span>:
+      - <span class="text-brand-400">uses</span>: <span class="text-slate-200">actions/checkout@v4</span>
+      - <span class="text-brand-400">name</span>: <span class="text-slate-200">Set up QEMU for ARM64 Emulation</span>
+        <span class="text-brand-400">uses</span>: <span class="text-slate-200">docker/setup-qemu-action@v3</span>
+        <span class="text-brand-400">with</span>:
+          <span class="text-brand-400">platforms</span>: <span class="text-emerald-300">arm64</span>
+      - <span class="text-brand-400">name</span>: <span class="text-slate-200">Execute C Fingerprint Tests under QEMU</span>
+        <span class="text-brand-400">run</span>: |
+          docker run --rm -v $PWD:/workspace -w /workspace             arm64v8/ubuntu:22.04 /bin/bash -c             "apt-get update && apt-get install -y gcc make &&              make test-fingerprint"</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Supported Hardware Targets Table -->
+  <section id="hardware-matrix" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-slate-800">
+    <div class="max-w-3xl mb-12">
+      <h2 class="text-xs uppercase tracking-widest font-mono text-brand-400 font-bold mb-2">Hardware Target Support Matrix</h2>
+      <h3 class="text-3xl font-bold text-white tracking-tight">Phase 1 through Phase 4 Coverage</h3>
+      <p class="text-slate-400 mt-3 text-base">
+        Litrun systematically expands support from high-volume hobbyist SBCs to enterprise industrial boards, edge NPUs, and next-gen RISC-V compute nodes.
+      </p>
+    </div>
+
+    <!-- Filter Buttons -->
+    <div class="flex items-center space-x-2 mb-4 overflow-x-auto code-scroll pb-2">
+      <span class="text-xs font-mono text-slate-400 mr-2">Filter Phase:</span>
+      <button data-filter="all" class="hw-filter-btn px-3 py-1 rounded-md text-xs font-mono bg-brand-500 text-slate-950 font-bold">All (8)</button>
+      <button data-filter="1" class="hw-filter-btn px-3 py-1 rounded-md text-xs font-mono bg-slate-800 text-slate-300 hover:text-white">Phase 1 (2)</button>
+      <button data-filter="2" class="hw-filter-btn px-3 py-1 rounded-md text-xs font-mono bg-slate-800 text-slate-300 hover:text-white">Phase 2 (4)</button>
+      <button data-filter="3" class="hw-filter-btn px-3 py-1 rounded-md text-xs font-mono bg-slate-800 text-slate-300 hover:text-white">Phase 3 (2)</button>
+    </div>
+
+    <!-- Table Container -->
+    <div class="overflow-x-auto rounded-2xl border border-slate-800 glass-panel">
+      <table class="w-full text-left border-collapse text-xs sm:text-sm">
+        <thead>
+          <tr class="bg-slate-900/90 border-b border-slate-800 text-slate-300 font-mono text-xs uppercase">
+            <th class="p-4 font-semibold">Board / Device</th>
+            <th class="p-4 font-semibold">SoC Architecture</th>
+            <th class="p-4 font-semibold">NPU / Acceleration</th>
+            <th class="p-4 font-semibold">Phase</th>
+            <th class="p-4 font-semibold">Priority & Market Rationale</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-800 text-slate-300 font-sans" id="hardwareTableBody">
+          <!-- RPi 4 -->
+          <tr class="hw-row hover:bg-slate-800/40 transition-colors" data-phase="1">
+            <td class="p-4 font-medium text-white">Raspberry Pi 4 Model B</td>
+            <td class="p-4 font-mono text-xs text-slate-400">BCM2711 (Cortex-A72)</td>
+            <td class="p-4 text-slate-500">None (CPU NEON)</td>
+            <td class="p-4"><span class="px-2 py-0.5 rounded text-xs font-mono bg-brand-500/10 text-brand-400 font-semibold border border-brand-500/20">Phase 1</span></td>
+            <td class="p-4 text-slate-300"><span class="text-emerald-400 font-semibold">Highest</span> — 40M+ active units installed globally</td>
+          </tr>
+          <!-- RPi 5 -->
+          <tr class="hw-row hover:bg-slate-800/40 transition-colors" data-phase="1">
+            <td class="p-4 font-medium text-white">Raspberry Pi 5</td>
+            <td class="p-4 font-mono text-xs text-slate-400">BCM2712 (Cortex-A76)</td>
+            <td class="p-4 text-slate-500">None (RP1 I/O, DotProd)</td>
+            <td class="p-4"><span class="px-2 py-0.5 rounded text-xs font-mono bg-brand-500/10 text-brand-400 font-semibold border border-brand-500/20">Phase 1</span></td>
+            <td class="p-4 text-slate-300"><span class="text-emerald-400 font-semibold">Highest</span> — Fastest flagship Pi CPU; 2.5x speedup</td>
+          </tr>
+          <!-- Orange Pi 5 -->
+          <tr class="hw-row hover:bg-slate-800/40 transition-colors" data-phase="2">
+            <td class="p-4 font-medium text-white">Orange Pi 5 / 5 Plus</td>
+            <td class="p-4 font-mono text-xs text-slate-400">Rockchip RK3588 (A76/A55)</td>
+            <td class="p-4"><span class="text-purple-400 font-mono font-semibold">6 TOPS NPU</span> (RKNN)</td>
+            <td class="p-4"><span class="px-2 py-0.5 rounded text-xs font-mono bg-purple-500/10 text-purple-400 font-semibold border border-purple-500/20">Phase 2</span></td>
+            <td class="p-4 text-slate-300"><span class="text-accent-400 font-semibold">High</span> — Only cheap, high-performance Linux NPU on market</td>
+          </tr>
+          <!-- Jetson -->
+          <tr class="hw-row hover:bg-slate-800/40 transition-colors" data-phase="2">
+            <td class="p-4 font-medium text-white">Jetson Nano / Orin Nano</td>
+            <td class="p-4 font-mono text-xs text-slate-400">Tegra + ARM Cortex</td>
+            <td class="p-4 text-emerald-400 font-mono font-semibold">CUDA / NVDLA (20-40 TOPS)</td>
+            <td class="p-4"><span class="px-2 py-0.5 rounded text-xs font-mono bg-purple-500/10 text-purple-400 font-semibold border border-purple-500/20">Phase 2</span></td>
+            <td class="p-4 text-slate-300"><span class="text-accent-400 font-semibold">High</span> — Dominates robotics and autonomous vision startups</td>
+          </tr>
+          <!-- BeagleBone -->
+          <tr class="hw-row hover:bg-slate-800/40 transition-colors" data-phase="2">
+            <td class="p-4 font-medium text-white">BeagleBone AI-64</td>
+            <td class="p-4 font-mono text-xs text-slate-400">TI TDA4VM (Dual A72)</td>
+            <td class="p-4 text-amber-400 font-mono">C7x DSP / MMA (8 TOPS)</td>
+            <td class="p-4"><span class="px-2 py-0.5 rounded text-xs font-mono bg-purple-500/10 text-purple-400 font-semibold border border-purple-500/20">Phase 2</span></td>
+            <td class="p-4 text-slate-300"><span class="text-slate-400">Medium</span> — Mission-critical industrial IoT & automation</td>
+          </tr>
+          <!-- Radxa Rock 5B -->
+          <tr class="hw-row hover:bg-slate-800/40 transition-colors" data-phase="2">
+            <td class="p-4 font-medium text-white">Radxa Rock 5B</td>
+            <td class="p-4 font-mono text-xs text-slate-400">Rockchip RK3588S</td>
+            <td class="p-4"><span class="text-purple-400 font-mono font-semibold">6 TOPS NPU</span> (RKNN)</td>
+            <td class="p-4"><span class="px-2 py-0.5 rounded text-xs font-mono bg-purple-500/10 text-purple-400 font-semibold border border-purple-500/20">Phase 2</span></td>
+            <td class="p-4 text-slate-300"><span class="text-slate-400">Medium</span> — Widely used open hardware developer platform</td>
+          </tr>
+          <!-- Khadas VIM4 -->
+          <tr class="hw-row hover:bg-slate-800/40 transition-colors" data-phase="3">
+            <td class="p-4 font-medium text-white">Khadas VIM4</td>
+            <td class="p-4 font-mono text-xs text-slate-400">Amlogic A311D2</td>
+            <td class="p-4 text-amber-400 font-mono">5 TOPS NPU</td>
+            <td class="p-4"><span class="px-2 py-0.5 rounded text-xs font-mono bg-accent-500/10 text-accent-400 font-semibold border border-accent-500/20">Phase 3</span></td>
+            <td class="p-4 text-slate-300"><span class="text-slate-400">Medium</span> — Premium maker and edge vision ecosystem</td>
+          </tr>
+          <!-- RISC-V -->
+          <tr class="hw-row hover:bg-slate-800/40 transition-colors" data-phase="3">
+            <td class="p-4 font-medium text-white">SiFive HiFive / Milk-V Pioneer</td>
+            <td class="p-4 font-mono text-xs text-slate-400">RISC-V RV64GC (Vector 1.0)</td>
+            <td class="p-4 text-slate-500">None (RVV Extension)</td>
+            <td class="p-4"><span class="px-2 py-0.5 rounded text-xs font-mono bg-accent-500/10 text-accent-400 font-semibold border border-accent-500/20">Phase 3</span></td>
+            <td class="p-4 text-slate-300"><span class="text-brand-400 font-semibold">Strategic First-Mover</span> — Positioned for the open ISA wave</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Academic Recognition & Commercialization Strategy -->
+  <section class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-slate-800">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <!-- Left: Academic Strategy -->
+      <div class="p-6 rounded-2xl glass-panel border border-slate-800">
+        <div class="flex items-center space-x-2 text-accent-400 mb-4">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path></svg>
+          <h3 class="text-xl font-bold text-white">Academic Recognition & Citations</h3>
+        </div>
+        <p class="text-xs text-slate-400 mb-4 leading-relaxed">
+          To achieve international prestige, Litrun pairs open-source engineering with formal systems research and an open benchmark dataset.
+        </p>
+
+        <div class="space-y-3 text-xs">
+          <div class="p-3 rounded-lg bg-slate-900/80 border border-slate-800">
+            <span class="font-bold text-white block">1. The MLSys / MobiSys Systems Paper:</span>
+            <span class="text-slate-400">Formalize the hardware abstraction architecture and resource governor design under thermal decay constraints.</span>
+          </div>
+          <div class="p-3 rounded-lg bg-slate-900/80 border border-slate-800">
+            <span class="font-bold text-white block">2. Public HuggingFace Benchmark Dataset:</span>
+            <span class="text-slate-400">Publish open tokens/sec, RAM footprint, and tokens/joule across 10+ SBCs and 20+ quantized models. Researchers will cite this dataset heavily.</span>
+          </div>
+          <div class="p-3 rounded-lg bg-slate-900/80 border border-slate-800">
+            <span class="font-bold text-white block">3. First RK3588 NPU Efficiency Study:</span>
+            <span class="text-slate-400">First published empirical comparison between ARM NEON CPU vs Rockchip NPU for small LLMs.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Commercialization Model -->
+      <div class="p-6 rounded-2xl glass-panel border border-slate-800">
+        <div class="flex items-center space-x-2 text-brand-400 mb-4">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          <h3 class="text-xl font-bold text-white">Commercial Tier: Litrun Pro</h3>
+        </div>
+        <p class="text-xs text-slate-400 mb-4 leading-relaxed">
+          Open-core monetization modeled on Ollama, Weaviate, and Qdrant: 100% free core forever, with enterprise fleet orchestration.
+        </p>
+
+        <div class="grid grid-cols-2 gap-3 text-xs mb-4">
+          <div class="p-3 rounded-lg bg-slate-900/80 border border-slate-800">
+            <span class="font-mono text-emerald-400 font-bold block mb-1">Free Forever (MIT)</span>
+            <ul class="text-slate-400 space-y-1">
+              <li>• CLI & Python SDK</li>
+              <li>• Hardware fingerprinter</li>
+              <li>• Model & binary registries</li>
+              <li>• Local REST server</li>
+              <li>• All inference backends</li>
+            </ul>
+          </div>
+          <div class="p-3 rounded-lg bg-slate-900/80 border border-slate-800">
+            <span class="font-mono text-amber-400 font-bold block mb-1">Litrun Pro (Paid)</span>
+            <ul class="text-slate-400 space-y-1">
+              <li>• Web Fleet dashboard</li>
+              <li>• Over-The-Air (OTA) updates</li>
+              <li>• Hardware-pinned model signing</li>
+              <li>• HIPAA/GDPR audit logs</li>
+              <li>• $10K–$50K/yr contract tier</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="text-[11px] text-slate-400 p-2.5 rounded-lg bg-slate-900/50 border border-slate-800 font-mono">
+          💡 <span class="text-white font-semibold">Trajectory:</span> 1,000 GitHub stars creates credibility → 5,000 stars drives corporate inbound → 3 enterprise contracts make the project self-sustaining.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Day 1 & Week 1 Blueprint -->
+  <section id="day-one" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-3xl mb-12">
+      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-accent-500/10 border border-accent-500/20 text-xs font-mono text-accent-400 mb-2">
+        <span>🚀 ACTIONABLE STARTING LINE</span>
+      </div>
+      <h3 class="text-3xl font-bold text-white tracking-tight">What to Build on Day One</h3>
+      <p class="text-slate-400 mt-3 text-base">
+        Forget the website, docs, or fleet management for now. The only goal of Week 1 is to achieve the single magical working moment on a physical Raspberry Pi.
+      </p>
+    </div>
+
+    <!-- Step by Step Day 1 Action Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div class="p-5 rounded-2xl glass-panel border border-slate-800">
+        <span class="w-7 h-7 rounded-lg bg-brand-500/20 text-brand-400 flex items-center justify-center font-mono font-bold text-xs mb-3">1</span>
+        <h4 class="font-bold text-white text-sm mb-1">Commit 1: C Fingerprint</h4>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Connect your physical Pi 4 or Pi 5. Write 50 lines of C that reads <code class="text-[11px] bg-slate-800 px-1 rounded">/proc/cpuinfo</code> and devicetree, outputting a clean normalized JSON hardware profile.
+        </p>
+      </div>
+
+      <div class="p-5 rounded-2xl glass-panel border border-slate-800">
+        <span class="w-7 h-7 rounded-lg bg-accent-500/20 text-accent-400 flex items-center justify-center font-mono font-bold text-xs mb-3">2</span>
+        <h4 class="font-bold text-white text-sm mb-1">Commit 2: Prebuilt Auto-Pull</h4>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Precompile a llama.cpp binary for ARM64 Cortex-A76. Verify it manually, then write POSIX automation to download and cache it locally automatically.
+        </p>
+      </div>
+
+      <div class="p-5 rounded-2xl glass-panel border border-slate-800">
+        <span class="w-7 h-7 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center font-mono font-bold text-xs mb-3">3</span>
+        <h4 class="font-bold text-white text-sm mb-1">Commit 3: Model Schema & CI</h4>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Draft <code class="text-[11px] bg-slate-800 px-1 rounded">models.yaml</code> with Qwen2.5-0.5B. Wire GitHub Actions to run cross-compiled unit tests under QEMU on every single git push.
+        </p>
+      </div>
+    </div>
+
+    <!-- Week 1 Magical Moment Terminal -->
+    <div class="p-6 rounded-2xl bg-dark-950 border border-brand-500/30 text-xs font-mono">
+      <div class="text-brand-400 font-bold mb-2">THE ONLY GOAL FOR WEEK 1:</div>
+      <div class="text-slate-400 mb-4 text-xs font-sans">
+        Execute this on a fresh, cold Raspberry Pi OS 64-bit install with zero prior setup:
+      </div>
+      <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 space-y-1">
+        <div><span class="text-brand-400 font-bold">$</span> litrun run qwen2.5-0.5b</div>
+        <div class="text-slate-400 mt-2">Detected: Raspberry Pi 5 (BCM2712, 8GB)</div>
+        <div class="text-slate-400">Pulling binary: llama.cpp-arm64-a76-v0.1.0 ... <span class="text-emerald-400">done</span></div>
+        <div class="text-slate-400">Pulling model: qwen2.5-0.5b-Q4_K_M (397MB) ... <span class="text-emerald-400">done</span></div>
+        <div class="text-emerald-400">Running. 14.2 tok/s</div>
+        <div class="text-slate-300 pt-2">&gt; Hello</div>
+        <div class="text-white">Hi there! How can I help you today?</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800 py-8 bg-dark-950 text-center text-xs text-slate-500 font-mono">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center space-x-2">
+        <span class="w-2 h-2 rounded-full bg-brand-400"></span>
+        <span class="text-slate-300 font-bold font-mono">litrun</span>
+        <span>— Lightweight Embedded Linux AI Runtime</span>
+      </div>
+      <div>
+        <span>MIT Open Source Core • Architected for Raspberry Pi, Orange Pi & ARM64</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Notification Toast for Copy Actions -->
+  <div id="copyToast" class="fixed bottom-6 right-6 px-4 py-2.5 rounded-xl glass-panel border border-brand-500/40 text-xs font-mono text-brand-300 shadow-2xl transition-all duration-300 transform translate-y-20 opacity-0 pointer-events-none z-50 flex items-center space-x-2">
+    <span>✓</span>
+    <span id="copyToastMessage">Copied to clipboard</span>
+  </div>
+
+  <!-- Interactive JavaScript Logic -->
+  <script>
+    // Copy toast helper
+    function showToast(msg) {
+      const toast = document.getElementById('copyToast');
+      const toastMsg = document.getElementById('copyToastMessage');
+      toastMsg.textContent = msg;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+      setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 2500);
+    }
+
+    function copyText(text, successMsg) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => showToast(successMsg)).catch(() => fallbackCopy(text, successMsg));
+      } else {
+        fallbackCopy(text, successMsg);
+      }
+    }
+
+    function fallbackCopy(text, successMsg) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.left = '-9999px';
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand('copy');
+        showToast(successMsg);
+      } catch (err) {
+        showToast('Selection ready to copy');
+      }
+      document.body.removeChild(ta);
+    }
+
+    // Quick Copy Install Button
+    document.getElementById('quickCopyInstallBtn').addEventListener('click', () => {
+      copyText('curl -sSL https://litrun.dev/install | sh', 'Copied: curl -sSL https://litrun.dev/install | sh');
+    });
+
+    // Code Tabs Switching
+    const tabBtns = document.querySelectorAll('.code-tab-btn');
+    const tabContents = document.querySelectorAll('.code-tab-content');
+
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const targetTab = btn.getAttribute('data-tab');
+        tabBtns.forEach(b => {
+          b.classList.remove('bg-slate-800', 'border-slate-700', 'text-white');
+          b.classList.add('text-slate-400');
+        });
+        btn.classList.add('bg-slate-800', 'border-slate-700', 'text-white');
+        btn.classList.remove('text-slate-400');
+
+        tabContents.forEach(content => {
+          if (content.id === 'tab-' + targetTab) {
+            content.classList.remove('hidden');
+          } else {
+            content.classList.add('hidden');
+          }
+        });
+      });
+    });
+
+    // Hardware Filter Buttons
+    const filterBtns = document.querySelectorAll('.hw-filter-btn');
+    const hwRows = document.querySelectorAll('.hw-row');
+
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const filter = btn.getAttribute('data-filter');
+        filterBtns.forEach(b => {
+          b.classList.remove('bg-brand-500', 'text-slate-950', 'font-bold');
+          b.classList.add('bg-slate-800', 'text-slate-300');
+        });
+        btn.classList.add('bg-brand-500', 'text-slate-950', 'font-bold');
+        btn.classList.remove('bg-slate-800', 'text-slate-300');
+
+        hwRows.forEach(row => {
+          const rowPhase = row.getAttribute('data-phase');
+          if (filter === 'all' || rowPhase === filter) {
+            row.style.display = '';
+          } else {
+            row.style.display = 'none';
+          }
+        });
+      });
+    });
+
+    // Phase 1 Checklist state tracking
+    const checkboxes = document.querySelectorAll('.w4-check');
+    const progressText = document.getElementById('checklistProgressText');
+
+    function updateChecklistProgress() {
+      let count = 0;
+      checkboxes.forEach(cb => { if (cb.checked) count++; });
+      progressText.textContent = count + ' of ' + checkboxes.length + ' milestones completed';
+      try {
+        const saved = Array.from(checkboxes).map(cb => cb.checked);
+        localStorage.setItem('litrun_checklist_phase1', JSON.stringify(saved));
+      } catch (e) {}
+    }
+
+    checkboxes.forEach(cb => {
+      cb.addEventListener('change', updateChecklistProgress);
+    });
+
+    // Restore checklist from localStorage
+    try {
+      const saved = JSON.parse(localStorage.getItem('litrun_checklist_phase1') || '[]');
+      if (Array.isArray(saved)) {
+        checkboxes.forEach((cb, idx) => {
+          if (saved[idx] !== undefined) cb.checked = saved[idx];
+        });
+        updateChecklistProgress();
+      }
+    } catch (e) {}
+
+    // Interactive Simulator Data & Logic
+    const boardData = {
+      rpi5: {
+        name: "Raspberry Pi 5 Model B",
+        soc: "BCM2712",
+        arch: "aarch64",
+        cores: 4,
+        ram_total: 8192,
+        ram_avail: 6800,
+        isa: ["neon", "fp16", "dotprod", "i8mm"],
+        npu: null,
+        binary: "llama.cpp-arm64-a76-dotprod-v0.1.0",
+        base_speed: 14.2
+      },
+      rpi4: {
+        name: "Raspberry Pi 4 Model B",
+        soc: "BCM2711",
+        arch: "aarch64",
+        cores: 4,
+        ram_total: 4096,
+        ram_avail: 3100,
+        isa: ["neon", "fp16"],
+        npu: null,
+        binary: "llama.cpp-arm64-a72-neon-v0.1.0",
+        base_speed: 8.2
+      },
+      orangepi5: {
+        name: "Orange Pi 5 (RK3588)",
+        soc: "Rockchip RK3588",
+        arch: "aarch64",
+        cores: 8,
+        ram_total: 16384,
+        ram_avail: 14200,
+        isa: ["neon", "fp16", "dotprod", "i8mm"],
+        npu: "6 TOPS RKNN NPU",
+        binary: "rknn-rk3588-v0.1.0",
+        base_speed: 31.5
+      },
+      jetson: {
+        name: "NVIDIA Jetson Orin Nano",
+        soc: "Orin SoC (6x Cortex-A78AE)",
+        arch: "aarch64",
+        cores: 6,
+        ram_total: 8192,
+        ram_avail: 6500,
+        isa: ["neon", "fp16", "dotprod"],
+        npu: "Ampere GPU Tensor Cores (40 TOPS)",
+        binary: "llama.cpp-cuda-orin-v0.1.0",
+        base_speed: 38.0
+      }
+    };
+
+    const modelData = {
+      qwen05: {
+        name: "Qwen2.5-0.5B",
+        quant: "Q4_K_M",
+        size_mb: 397,
+        ram_req_mb: 900,
+        speed_multiplier: 1.0
+      },
+      qwen15: {
+        name: "Qwen2.5-1.5B",
+        quant: "Q4_K_M",
+        size_mb: 980,
+        ram_req_mb: 1850,
+        speed_multiplier: 0.62
+      },
+      llama32: {
+        name: "Llama3.2-1B",
+        quant: "Q4_K_M",
+        size_mb: 820,
+        ram_req_mb: 1600,
+        speed_multiplier: 0.75
+      },
+      phi3mini: {
+        name: "Phi-3-Mini (3.8B)",
+        quant: "Q4_K_M",
+        size_mb: 2380,
+        ram_req_mb: 4200,
+        speed_multiplier: 0.32
+      }
+    };
+
+    let selectedBoardKey = 'rpi5';
+    let selectedModelKey = 'qwen05';
+
+    const boardBtns = document.querySelectorAll('.sim-board-btn');
+    const modelBtns = document.querySelectorAll('.sim-model-btn');
+
+    function updateSimulator() {
+      const b = boardData[selectedBoardKey];
+      const m = modelData[selectedModelKey];
+
+      // RAM envelope check
+      const ramOk = b.ram_avail >= m.ram_req_mb;
+      const ramPercent = Math.round((m.ram_req_mb / b.ram_total) * 100);
+
+      // Speed calculation
+      let calculatedSpeed = (b.base_speed * m.speed_multiplier).toFixed(1);
+      if (!ramOk) calculatedSpeed = "0.0 (OOM)";
+
+      // Update telemetry terminal
+      const logDiv = document.getElementById('simLogOutput');
+      let statusHtml = '';
+      if (ramOk) {
+        document.getElementById('simStatusBadge').className = 'text-emerald-400 font-bold';
+        document.getElementById('simStatusBadge').textContent = '● GOVERNOR PASS';
+      } else {
+        document.getElementById('simStatusBadge').className = 'text-red-400 font-bold';
+        document.getElementById('simStatusBadge').textContent = '⚠️ RAM CEILING EXCEEDED';
+      }
+
+      statusHtml += `<div><span class="text-brand-400">$</span> litrun run ${m.name.toLowerCase()}</div>`;
+      statusHtml += `<div class="text-slate-400">→ [C-Probe] Identified: <span class="text-white">${b.name}</span> (${b.soc}, ${b.ram_total}MB Total, ${b.ram_avail}MB Avail)</div>`;
+      statusHtml += `<div class="text-slate-400">→ [C-Probe] ISA Features: <span class="text-slate-300">[${b.isa.join(', ')}]</span></div>`;
+      if (b.npu) {
+        statusHtml += `<div class="text-purple-400">→ [Hardware NPU] Detected active acceleration: ${b.npu}</div>`;
+      }
+      statusHtml += `<div class="text-slate-400">→ [Resolver] Selected prebuilt binary: <span class="text-accent-400 font-semibold">${b.binary}</span></div>`;
+
+      if (ramOk) {
+        statusHtml += `<div class="text-slate-400">→ [Governor] Memory Check: <span class="text-emerald-400">${m.ram_req_mb} MB</span> required vs <span class="text-emerald-400">${b.ram_avail} MB</span> free → <span class="text-emerald-400 font-semibold">APPROVED</span></div>`;
+        statusHtml += `<div class="text-emerald-400 font-bold pt-1">→ Model loaded. Running at ${calculatedSpeed} tok/s on ${b.npu ? 'NPU' : 'CPU SIMD'}.</div>`;
+      } else {
+        statusHtml += `<div class="text-red-400">→ [Governor] Memory Check: <span class="text-red-400 font-bold">${m.ram_req_mb} MB</span> required exceeds available <span class="text-amber-400">${b.ram_avail} MB</span>!</div>`;
+        statusHtml += `<div class="text-amber-400">→ [Governor] Intercepted potential kernel OOM kill. Requesting smaller model or graceful degradation.</div>`;
+      }
+
+      logDiv.innerHTML = statusHtml;
+
+      // Update Metric Cards
+      document.getElementById('simRamMetric').textContent = `${m.ram_req_mb} MB / ${(b.ram_total/1024).toFixed(0)} GB`;
+      document.getElementById('simRamPercent').textContent = `${ramPercent}% system memory (${ramOk ? 'Safe Headroom' : 'Unsafe Spillage'})`;
+      document.getElementById('simRamPercent').className = ramOk ? 'text-[11px] text-brand-400' : 'text-[11px] text-red-400 font-bold';
+
+      document.getElementById('simQuantMetric').textContent = m.quant;
+      document.getElementById('simSpeedMetric').textContent = `${calculatedSpeed} tok/s`;
+      document.getElementById('simBackendMetric').textContent = b.npu ? b.npu : `CPU ${b.isa.includes('dotprod') ? 'NEON+dotprod' : 'NEON'}`;
+    }
+
+    boardBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        boardBtns.forEach(b => {
+          b.classList.remove('border-brand-500', 'bg-brand-500/10', 'text-white');
+          b.classList.add('border-slate-800', 'bg-slate-900/60', 'text-slate-300');
+        });
+        btn.classList.add('border-brand-500', 'bg-brand-500/10', 'text-white');
+        btn.classList.remove('border-slate-800', 'bg-slate-900/60', 'text-slate-300');
+        selectedBoardKey = btn.getAttribute('data-board');
+        updateSimulator();
+      });
+    });
+
+    modelBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        modelBtns.forEach(b => {
+          b.classList.remove('border-brand-500', 'bg-brand-500/10', 'text-white');
+          b.classList.add('border-slate-800', 'bg-slate-900/60', 'text-slate-300');
+        });
+        btn.classList.add('border-brand-500', 'bg-brand-500/10', 'text-white');
+        btn.classList.remove('border-slate-800', 'bg-slate-900/60', 'text-slate-300');
+        selectedModelKey = btn.getAttribute('data-model');
+        updateSimulator();
+      });
+    });
+
+    // Initialize Simulator on Load
+    updateSimulator();
+  </script>
+</body>
+</html>

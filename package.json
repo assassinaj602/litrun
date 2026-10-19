@@ -1,0 +1,32 @@
+{
+  "name": "litrun",
+  "version": "0.1.0",
+  "description": "Universal lightweight embedded Linux AI runtime for Raspberry Pi, Orange Pi, and ARM64/RISC-V SoCs",
+  "main": "index.js",
+  "bin": {
+    "litrun": "./bin/litrun.sh"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/litrun/litrun.git"
+  },
+  "keywords": [
+    "edge-ai",
+    "embedded-linux",
+    "raspberry-pi",
+    "arm64",
+    "llm",
+    "gguf",
+    "llama.cpp",
+    "runtime"
+  ],
+  "author": "litrun Contributors",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/litrun/litrun/issues"
+  },
+  "homepage": "https://litrun.dev"
+}

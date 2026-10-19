@@ -1,0 +1,69 @@
+# litrun Hardware Profile Registry
+version: "1.0"
+targets:
+  - id: "rpi5-bcm2712"
+    name: "Raspberry Pi 5"
+    soc: "BCM2712"
+    cpu: "Quad-core ARM Cortex-A76"
+    arch: "aarch64"
+    isa_features: ["asimd", "asimddp", "fphp"]
+    default_threads: 4
+    cooling: "Active Cooler recommended"
+    thermal_trip_c: 80.0
+    binary_target: "arm64-a76-dotprod"
+
+  - id: "rpi4-bcm2711"
+    name: "Raspberry Pi 4 Model B"
+    soc: "BCM2711"
+    cpu: "Quad-core ARM Cortex-A72"
+    arch: "aarch64"
+    isa_features: ["asimd"]
+    default_threads: 4
+    cooling: "Passive heatsink or fan"
+    thermal_trip_c: 80.0
+    binary_target: "arm64-a72-neon"
+
+  - id: "rpi3-bcm2837"
+    name: "Raspberry Pi 3 / Zero 2 W"
+    soc: "BCM2837"
+    cpu: "Quad-core ARM Cortex-A53"
+    arch: "aarch64"
+    isa_features: ["asimd"]
+    default_threads: 3
+    cooling: "Passive heatsink"
+    thermal_trip_c: 80.0
+    binary_target: "arm64-generic"
+
+  - id: "opi5-rk3588"
+    name: "Orange Pi 5 / 5 Plus"
+    soc: "RK3588"
+    cpu: "Octa-core (4x Cortex-A76 + 4x Cortex-A55)"
+    arch: "aarch64"
+    isa_features: ["asimd", "asimddp", "fphp", "i8mm"]
+    npu: "Rockchip NPU (6 TOPS)"
+    default_threads: 4
+    cooling: "Active fan"
+    thermal_trip_c: 85.0
+    binary_target: "arm64-a76-dotprod"
+
+  - id: "jetson-orin-nano"
+    name: "NVIDIA Jetson Orin Nano"
+    soc: "Tegra Orin"
+    cpu: "6-core ARM Cortex-A78AE"
+    arch: "aarch64"
+    isa_features: ["asimd", "asimddp", "fphp"]
+    gpu: "NVIDIA Ampere (1024 CUDA cores)"
+    default_threads: 4
+    cooling: "Active fan"
+    thermal_trip_c: 85.0
+    binary_target: "arm64-a76-dotprod"
+
+  - id: "x86_64-avx2"
+    name: "Generic x86_64 with AVX2"
+    soc: "x86_64"
+    cpu: "Intel / AMD x86_64"
+    arch: "x86_64"
+    isa_features: ["avx", "avx2", "fma"]
+    default_threads: 4
+    thermal_trip_c: 85.0
+    binary_target: "x86_64-avx2"

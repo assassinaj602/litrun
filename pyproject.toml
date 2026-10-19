@@ -1,0 +1,88 @@
+[build-system]
+requires = ["setuptools>=65.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "litrun"
+version = "0.1.0"
+description = "Universal lightweight embedded Linux AI runtime for Raspberry Pi, Orange Pi, and ARM64 SoCs"
+readme = "README.md"
+authors = [{ name = "litrun Contributors", email = "dev@litrun.dev" }]
+license = { text = "MIT" }
+requires-python = ">=3.9"
+keywords = [
+    "edge-ai",
+    "embedded-linux",
+    "raspberry-pi",
+    "arm64",
+    "llm",
+    "gguf",
+    "llama.cpp",
+    "inference-engine",
+    "hardware-acceleration"
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: C",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: System :: Hardware"
+]
+dependencies = [
+    "click>=8.0.0",
+    "rich>=12.0.0",
+    "pyyaml>=6.0",
+    "requests>=2.28.0",
+    "httpx>=0.24.0"
+]
+
+[project.optional-dependencies]
+server = [
+    "fastapi>=0.100.0",
+    "uvicorn>=0.22.0",
+    "pydantic>=2.0.0"
+]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "ruff>=0.1.0",
+    "mypy>=1.0.0"
+]
+all = [
+    "fastapi>=0.100.0",
+    "uvicorn>=0.22.0",
+    "pydantic>=2.0.0",
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0"
+]
+
+[project.scripts]
+litrun = "litrun.cli.main:cli"
+
+[project.urls]
+Homepage = "https://litrun.dev"
+Documentation = "https://docs.litrun.dev"
+Repository = "https://github.com/litrun/litrun"
+Issues = "https://github.com/litrun/litrun/issues"
+
+[tool.setuptools]
+package-dir = {"" = "sdk"}
+
+[tool.setuptools.packages.find]
+where = ["sdk"]
+
+[tool.setuptools.package-data]
+litrun = [
+    "registry/*.yaml",
+    "lib/*.so"
+]

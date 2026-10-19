@@ -1,0 +1,28 @@
+name: QEMU ARM64 Emulation
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-arm64-qemu:
+    name: ARM64 Native Core under QEMU
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up QEMU for ARM64 Emulation
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
+
+      - name: Execute C Fingerprint Tests under QEMU
+        run: |
+          docker run --rm -v $PWD:/workspace -w /workspace \
+            arm64v8/ubuntu:22.04 /bin/bash -c \
+            "apt-get update && apt-get install -y gcc make && \
+             make -C core clean all && \
+             make -C core test && \
+             ./core/bin/litrun-probe"

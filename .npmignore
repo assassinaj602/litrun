@@ -1,0 +1,11 @@
+*.pdf
+*.html
+core/
+sdk/
+dist/
+build/
+.github/
+tests/
+demo.tape
+Makefile
+pyproject.toml

@@ -158,7 +158,7 @@ curl http://localhost:8080/v1/hardware
 
 ```bash
 # Clone the repository
-git clone https://github.com/litrun/litrun.git
+git clone https://github.com/assassinaj602/litrun.git
 cd litrun
 
 # Build C Native Core and Shared Library

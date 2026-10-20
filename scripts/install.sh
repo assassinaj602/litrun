@@ -90,7 +90,7 @@ fi
 info "Installing litrun Python runtime..."
 python3 -m pip install --upgrade --user litrun 2>/dev/null || {
     warn "Direct pip install failed. Installing from GitHub source..."
-    python3 -m pip install --upgrade --user "git+https://github.com/litrun/litrun.git" 2>/dev/null || {
+    python3 -m pip install --upgrade --user "git+https://github.com/assassinaj602/litrun.git" 2>/dev/null || {
         warn "Could not install via git. Checking local wheel or fallback..."
     }
 }

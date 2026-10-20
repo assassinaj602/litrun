@@ -1,25 +1,24 @@
 # VHS Tape Configuration for litrun Terminal Demo
-# Output: demo.gif
-Output demo.gif
+# Output: assets/demo.gif
+Output assets/demo.gif
 
-Set FontSize 18
-Set Width 1200
-Set Height 720
-Set Theme "Charm"
-Set Padding 20
+Set FontSize 16
+Set Width 960
+Set Height 580
+Set Theme "Dracula"
+Set Padding 15
 
-# 1. Inspect Hardware
+# 1. Inspect Hardware & Vector Extensions
 Type "litrun inspect"
 Enter
 Sleep 3s
 
-# 2. List Models & Registries
+# 2. List Curated Model Registry
 Type "litrun list"
 Enter
-Sleep 3s
+Sleep 2.5s
 
-# 3. One-Command LLM Run on Embedded Linux
-Type "litrun run qwen2.5-0.5b --prompt 'Explain how litrun avoids kernel OOM crashes on Raspberry Pi.'"
+# 3. One-Command LLM Inference with Active Governor
+Type "litrun run smollm2-135m --prompt 'What is edge AI?'"
 Enter
-Sleep 5s
-
+Sleep 4.5s

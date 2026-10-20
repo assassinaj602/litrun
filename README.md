@@ -10,6 +10,10 @@
 > **Deploy any LLM to any embedded Linux device in one command.**  
 > A lightweight, universal open-source runtime that eliminates hardware fragmentation for on-device AI across Raspberry Pi, Orange Pi, industrial SoCs, and ARM64 / RISC-V edge boards.
 
+<p align="center">
+  <img src="assets/demo.gif" alt="litrun terminal demo" width="850">
+</p>
+
 ---
 
 ## 🚀 Quickstart: The One Working Moment

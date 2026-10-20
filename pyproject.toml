@@ -70,9 +70,9 @@ litrun = "litrun.cli.main:cli"
 
 [project.urls]
 Homepage = "https://litrun.dev"
-Documentation = "https://docs.litrun.dev"
-Repository = "https://github.com/litrun/litrun"
-Issues = "https://github.com/litrun/litrun/issues"
+Documentation = "https://github.com/assassinaj602/litrun#readme"
+Repository = "https://github.com/assassinaj602/litrun"
+Issues = "https://github.com/assassinaj602/litrun/issues"
 
 [tool.setuptools]
 package-dir = {"" = "sdk"}

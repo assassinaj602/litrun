@@ -4,3 +4,4 @@ module.exports = {
   description: "Universal lightweight embedded Linux AI runtime for Raspberry Pi, Orange Pi, and ARM64 SoCs",
   installCommand: "pip install litrun"
 };
+

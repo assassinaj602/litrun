@@ -16,7 +16,7 @@
 
 ### 1. Instant POSIX Bootstrap (No toolchains, no cmake)
 ```bash
-curl -sSL https://litrun.dev/install | sh
+curl -sSL https://raw.githubusercontent.com/assassinaj602/litrun/main/scripts/install.sh | sh
 ```
 *Or via pip:*
 ```bash

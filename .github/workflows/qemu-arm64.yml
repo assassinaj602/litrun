@@ -20,8 +20,8 @@ jobs:
 
       - name: Execute C Fingerprint Tests under QEMU
         run: |
-          docker run --rm -v $PWD:/workspace -w /workspace \
-            arm64v8/ubuntu:22.04 /bin/bash -c \
+          docker run --platform linux/arm64 --rm -v $PWD:/workspace -w /workspace \
+            ubuntu:22.04 /bin/bash -c \
             "apt-get update && apt-get install -y gcc make && \
              make -C core clean all && \
              make -C core test && \
